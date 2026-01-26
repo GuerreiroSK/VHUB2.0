@@ -1,0 +1,13 @@
+# Node dependencies
+node_modules/
+dist/
+.env
+
+# OS-Generated files
+.DS_Store
+
+#Logs
+*.log
+
+# Vite cache
+.vite/
