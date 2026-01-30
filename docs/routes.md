@@ -11,30 +11,30 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ## Users
 
-### `GET /api/users/test`
+### `GET /api/users/user_test`
 - **Purpose**: Verify users router is mounted and working
 - **Method**: `GET`
-- **URL**: `/api/users/test`
+- **URL**: `/api/users/user_test`
 - **Response**:
   ```json
-  { "message": "users route working" }
+  { "message": "User route working" }
 
 ## Organizations
 
-### `GET /api/organizations/test`
+### `GET /api/organizations/organization_test`
 - **Purpose**: Verify organizations router is mounted and working
 - **Method**: `GET`
-- **URL**: `/api/organizations/test`
+- **URL**: `/api/organizations/organization_test`
 - **Response**:
   ```json
-  { "message": "organizations route working" }
+  { "message": "Organization route working" }
 
 ## Events
 
-### `GET /api/events/test`
+### `GET /api/events/event_test`
 - **Purpose**: Verify events router is mounted and working
 - **Method**: `GET`
-- **URL**: `/api/events/test`
+- **URL**: `/api/events/event_test`
 - **Response**:
   ```json
-  { "message": "events route working" }
+  { "message": "Event route working" }

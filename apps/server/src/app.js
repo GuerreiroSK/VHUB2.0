@@ -1,12 +1,12 @@
 import express from "express";
-import testUserRoutes from "./routes/users.js"
-import testOrganizationsRoutes from "./routes/organizations.js"
-import testEventsRoutes from "./routes/events.js"
+import testUserRouter from "./routes/users.route.js"
+import testOrganizationsRouter from "./routes/organizations.route.js"
+import testEventsRouter from "./routes/events.route.js"
 
 const app = express();
 
-app.use('/api/users', testUserRoutes);
-app.use('/api/organizations', testOrganizationsRoutes);
-app.use('/api/events', testEventsRoutes);
+app.use('/api/users', testUserRouter);
+app.use('/api/organizations', testOrganizationsRouter);
+app.use('/api/events', testEventsRouter);
 
 export default app
