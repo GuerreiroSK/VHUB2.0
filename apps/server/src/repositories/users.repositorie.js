@@ -1,3 +1,3 @@
-export function getTestData() {
+export function getUserTestData() {
     return { message: "User route working" };
 }

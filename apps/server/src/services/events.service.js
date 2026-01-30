@@ -1,5 +1,5 @@
-import { getEventData } from '../repositories/events.repositorie.js'
+import { getEventTestData } from '../repositories/events.repositorie.js'
 
 export function getEventTestMessage() {
-    return getEventData();
+    return getEventTestData();
 }
