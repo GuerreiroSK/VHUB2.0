@@ -1,5 +1,8 @@
-import { getOrganizationTestData } from '../repositories/organizations.repositorie.js'
+import { getOrganizationData } from '../repositories/organizations.repositorie.js'
 
 export function getOrganizationTestMessage() {
-    return getOrganizationTestData();
+
+    const org = getOrganizationData();
+    
+    return org.toPublic();
 }
