@@ -1,5 +1,6 @@
-import { getTestData } from "../repositories/users.repositorie.js";
+import { getUserTestData } from "../repositories/users.repositorie.js";
 
 export function getUserTestMessage() {
-    return getTestData();
+    const user = getUserTestData();
+    return user.toPublic();
 }
