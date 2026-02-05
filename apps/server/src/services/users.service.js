@@ -1,8 +1,8 @@
-import { getUserData } from "../repositories/users.repositorie.js";
+import { getUserData } from "../repositories/users.repository.js";
 
-export function getUserTestMessage() {
+export async function getUserTestMessage() {
 
-    const user = getUserData();
+    const user = await getUserData();
 
     return user.toPublic();
 }

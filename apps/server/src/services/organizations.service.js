@@ -1,4 +1,4 @@
-import { getOrganizationData } from '../repositories/organizations.repositorie.js'
+import { getOrganizationData } from '../repositories/organizations.repository.js'
 
 export function getOrganizationTestMessage() {
 
