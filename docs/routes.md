@@ -2,39 +2,70 @@
 
 This document lists the backend API endpoints currently implemented in the project.
 
+---
+
 ## Conventions
+
 - Base URL (dev): `http://localhost:3000`
 - All API routes are mounted under: `/api`
-- Responses are JSON unless stated otherwise.
+- Responses are JSON unless stated otherwise
+- Current endpoints are **test/demo endpoints** used to validate architecture and data flow
 
 ---
 
 ## Users
 
-### `GET /api/users/user_test`
-- **Purpose**: Verify users router is mounted and working
+### `GET /api/users/test`
+
+- **Purpose**:  
+  Verify the users vertical slice (route → controller → service → repository → database)
+
 - **Method**: `GET`
-- **URL**: `/api/users/user_test`
+
+- **URL**:  
+  `/api/users/test`
+
 - **Response**:
   ```json
-  { "message": "User route working" }
+  {
+    "id": 1,
+    "name": "João",
+    "email": "joao@email.com"
+  }
+
+- Notes:
+  - Data is fetched from PostgreSQL
+  - Sensitive fields ( e.g. password ) are not exposed
+  - Response is produced via the User.toPublic() entity method
+
+---
 
 ## Organizations
 
 ### `GET /api/organizations/organization_test`
-- **Purpose**: Verify organizations router is mounted and working
+- **Purpose**: Verify organizations routing and service wiring
 - **Method**: `GET`
 - **URL**: `/api/organizations/organization_test`
 - **Response**:
   ```json
   { "message": "Organization route working" }
 
+- Notes:
+  - Currently uses mock data
+  - Will later be backed by PostgreSQL
+
+---   
+
 ## Events
 
 ### `GET /api/events/event_test`
-- **Purpose**: Verify events router is mounted and working
+- **Purpose**: Verify events routing and service wiring
 - **Method**: `GET`
 - **URL**: `/api/events/event_test`
 - **Response**:
   ```json
   { "message": "Event route working" }
+
+- Notes:
+  - Currently uses mock data
+  - Will later be backed by PostgreSQL
