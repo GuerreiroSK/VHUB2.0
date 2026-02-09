@@ -1,8 +1,8 @@
 import { getOrganizationData } from '../repositories/organizations.repository.js'
 
-export function getOrganizationTestMessage() {
+export async function getOrganizationTestMessage() {
 
-    const org = getOrganizationData();
+    const org = await getOrganizationData();
     
     return org.toPublic();
 }
