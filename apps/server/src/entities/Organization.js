@@ -1,9 +1,8 @@
 class Organization {
-    constructor(id, orgName, email, password, description, location) {
+    constructor(id, orgName, email, description, location) {
         this.id = id
         this.orgName = orgName
         this.email = email
-        this.password = password
         this.description = description
         this.location = location
     }
