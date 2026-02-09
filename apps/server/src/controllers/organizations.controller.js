@@ -1,5 +1,8 @@
 import { getOrganizationTestMessage } from '../services/organizations.service.js'
 
-export function organizationTest(req, res) {
-    res.json(getOrganizationTestMessage());
+export async function organizationTest(req, res) {
+
+    const org = await getOrganizationTestMessage();
+    
+    res.json(org);
 }

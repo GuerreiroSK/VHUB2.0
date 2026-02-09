@@ -1,6 +1,6 @@
 import Organization from "../entities/Organization.js";
 
-export function getOrganizationData() {
+export async function getOrganizationData() {
 
     const org = new Organization(
         1,
