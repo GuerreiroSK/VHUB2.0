@@ -191,5 +191,28 @@ Docs are treated as part of the deliverable, not an afterthought.
 - **Git & GitHub**: version control and collaboration
 - **Docker (planned)**: consistent environments across machines
 
+---
 
+## Separation of Authentication from Domain Entities
+
+**Decision**  
+Remove authentication concerns (e.g. passwords) from the `Organization` domain entity.  
+Only `User` entities will own authentication credentials.
+
+**Why**
+- Authentication is a separate concern from core domain modeling
+- Organizations represent resources, not actors that prove identity
+- Users (people) perform actions on behalf of organizations
+- This enables clear role-based access control (e.g. volunteer, organization employee, admin, developer)
+- Prevents sensitive data from leaking into domain models or API contracts
+
+**Result**
+- `Organization` entity now contains only domain-relevant fields
+- Repository layer was the first to fail, correctly exposing invalid assumptions
+- Authentication responsibilities are isolated and can evolve independently
+- System actions can be attributed to users, not abstract entities
+
+**Trade-off**
+- Requires explicit user–organization relationships
+- Slightly more modeling upfront, but significantly safer and more scalable
 
