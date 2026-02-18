@@ -1,5 +1,8 @@
 import { getEventTestMessage } from '../services/events.service.js'
 
-export function eventTest (req, res) {
-    res.json(getEventTestMessage());
+export async function eventTest (req, res) {
+
+    const event = await getEventTestMessage();
+
+    res.json(event);
 }

@@ -1,6 +1,6 @@
 import Event from '../entities/Event.js'
 
-export function getEventData() {
+export async function getEventData() {
     
     const event = new Event(
         1, 

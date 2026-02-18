@@ -1,8 +1,8 @@
 import { getEventData } from '../repositories/events.repository.js'
 
-export function getEventTestMessage() {
+export async function getEventTestMessage() {
 
-    const event = getEventData();
+    const event = await getEventData();
 
     return event.toPublic();
 }
