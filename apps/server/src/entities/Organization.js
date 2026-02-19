@@ -1,7 +1,7 @@
 class Organization {
-    constructor(id, orgName, email, description, location) {
+    constructor(id, name, email, description, location) {
         this.id = id
-        this.orgName = orgName
+        this.name = name
         this.email = email
         this.description = description
         this.location = location
@@ -9,7 +9,7 @@ class Organization {
     toPublic() {
         return {
             id: this.id,
-            orgName: this.orgName,
+            name: this.name,
             email: this.email,
             description: this.description,
             location: this.location
