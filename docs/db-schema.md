@@ -52,7 +52,6 @@ Columns:
 - `id` (PK)
 - `name` (NOT NULL)
 - `email` (NOT NULL, UNIQUE)
-- `password` (NOT NULL)
 - `description` (NULLABLE)
 - `location` (NULLABLE)
 - `created_at` (NOT NULL, default `now()`)

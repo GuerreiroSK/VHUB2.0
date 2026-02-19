@@ -1,13 +1,24 @@
+import db_pool from '../db/index.js';
 import Event from '../entities/Event.js'
 
-export function getEventData() {
+export async function getEventData() {
     
-    const event = new Event(
-        1, 
-        "Help Alcacer",
-        "Alcacer do Sal", 
-        1, 
-        "alcacer@help.com"
+    const result = await db_pool.query(
+        'SELECT id, name, location, organization_id, contact_email FROM events LIMIT 1'
+    );
+
+    const row = result.rows[0];
+
+    if (!row) {
+        throw new Error ('No events found.');
+    }
+
+    const event = new Event (
+        row.id,
+        row.name,
+        row.location,
+        row.organization_id,
+        row.contact_email
     );
 
     return event;
