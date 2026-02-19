@@ -245,5 +245,24 @@ Repositories map database rows into domain entities using array transformations.
 
 ---
 
+## Service Layer Composition
+
+**Decision**
+Allow the service layer to compose data from multiple repositories to fulfill complex use cases.
+
+**Why**
+
+- Keeps repositories focused on data access
+- Prevents coupling between entities at the repository level
+- Enables flexible and reusable business logic
+- Supports richer API responses without breaking architecture
+
+**Result**
+
+- New endpoint `/api/events/with-organizations` implemented via service composition
+- Clean separation between data fetching and response shaping
+
+---
+
 **Additional Note**
 - Validation is applied at the repository level to ensure only valid domain entities are returned
