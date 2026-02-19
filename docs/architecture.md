@@ -39,7 +39,7 @@ apps/server/
 - HTTP request flow for a feature (example: Users):
 route → controller → service → repository → database → entity → service → controller → response
 
-### Layers and Responsabilities
+### Layers and Responsbilities
 
 - **Routes (`src/routes`)**
   - Define HTTP endpoints and paths
@@ -67,8 +67,10 @@ route → controller → service → repository → database → entity → serv
    - PostgreSQL exists
    - SQL exists
   - Use the shared DB pool
-  - Map databse rows to domain entities
+  - Map database rows into domain entities
   - Return entities, not raw database rows
+  - Validate data before constructing entities to ensure domain integrity
+
 
 - **Entities (`src/entities`)**
   - Represent domain concepts (User, Event, Organization)
@@ -84,7 +86,10 @@ route → controller → service → repository → database → entity → serv
 
 ## Architectural Guarantees
   ### This structure ensures that:
-  - Data sources can change ( mock -> PostegreSQL ) without refactoring routes or controllers
+  - Data sources can change ( mock -> PostgreSQL ) without refactoring routes or controllers
   - Sensitive fields ( e.g. passwords ) are never exposed accidentally
   - Async behavior propagates cleanly through the layers
   - Infrastructure concerns remain isolated from domain logic
+
+  - Notes:
+    - Collection repository methods return arrays (possibly empty), while singular methods throw if no data is found.
