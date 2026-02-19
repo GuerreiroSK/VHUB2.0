@@ -38,12 +38,18 @@ This document lists the backend API endpoints currently implemented in the proje
   - Sensitive fields ( e.g. password ) are not exposed
   - Response is produced via the User.toPublic() entity method
 
+  ### `GET /api/users`
+
+  - Returns all users
+  - Returns empty array if no users exist
+
 ---
 
 ## Organizations
 
 ### `GET /api/organizations/organization_test`
-- **Purpose**: Verify organizations routing and service wiring
+- **Pur Currently uses mock data
+  - Will later be backed by PostgreSQLpose**: Verify organizations routing and service wiring
 - **Method**: `GET`
 - **URL**: `/api/organizations/organization_test`
 - **Response**:
@@ -51,14 +57,21 @@ This document lists the backend API endpoints currently implemented in the proje
   { "message": "Organization route working" }
 
 - Notes:
-  - Currently uses mock data
-  - Will later be backed by PostgreSQL
+ - Data is fetched from PostgreSQL
+ - Response is constructed via Organization entity
+
+
+### `GET /api/organizations`
+
+- Returns all organizations
+- Returns empty array if no organizations exist
 
 ---   
 
 ## Events
 
 ### `GET /api/events/event_test`
+
 - **Purpose**: Verify events routing and service wiring
 - **Method**: `GET`
 - **URL**: `/api/events/event_test`
@@ -67,5 +80,11 @@ This document lists the backend API endpoints currently implemented in the proje
   { "message": "Event route working" }
 
 - Notes:
-  - Currently uses mock data
-  - Will later be backed by PostgreSQL
+ - Data is fetched from PostgreSQL
+ - Response is constructed via Event entity
+
+
+### `GET /api/events`
+
+- Returns all events
+- Returns empty array if no events exist

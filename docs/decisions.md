@@ -216,3 +216,34 @@ Only `User` entities will own authentication credentials.
 - Requires explicit user–organization relationships
 - Slightly more modeling upfront, but significantly safer and more scalable
 
+---
+
+## Collection Handling in Repositories
+
+**Decision**
+Collection methods (e.g. `getAll*`) return arrays, even when empty.
+
+**Why**
+- Absence of data is not an error
+- Provides consistent API behavior
+- Avoids unnecessary error handling in higher layers
+
+**Related Decision**
+- Singular methods (getById, getData) throw when no data is found.
+
+---
+
+## Row-to-Entity Mapping
+
+**Decision**
+Repositories map database rows into domain entities using array transformations.
+
+**Why**
+- Prevents raw data leakage
+- Keeps domain model consistent
+- Centralizes data transformation logic
+
+---
+
+**Additional Note**
+- Validation is applied at the repository level to ensure only valid domain entities are returned

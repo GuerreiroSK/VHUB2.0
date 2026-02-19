@@ -23,3 +23,33 @@ export async function getEventData() {
 
     return event;
 }
+
+export async function getAllEvents() {
+
+    const result = await db_pool.query(
+        'SELECT id, name, location, organization_id, contact_email FROM events'
+    );
+
+    const rows = result.rows;
+
+    if (rows.length === 0) {
+        return [];
+    }
+
+    const allEvents = rows.map(row => {
+
+        if (!row.organization_id) {
+            throw new Error (`Event with id: ${row.id} has no organization_id`);
+        }
+
+        return new Event (
+            row.id,
+            row.name,
+            row.location,
+            row.organization_id,
+            row.contact_email
+        )
+    })
+
+    return allEvents;
+}
