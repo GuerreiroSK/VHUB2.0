@@ -195,7 +195,6 @@ Authentication is intentionally not implemented yet.
 Planned features:
 - Password hashing
 - Login system
-- JWT authentication
 - Role-based access control
 
 ---
@@ -206,17 +205,6 @@ Planned features:
 - Data composition and transformation
 - Clean separation of concerns
 - Building real engineering thinking
-
----
-
-## 📌 Philosophy
-
-This project prioritizes:
-
-- Understanding over speed
-- Architecture over shortcuts
-- Consistency over hacks
-- Learning over copying
 
 ---
 
