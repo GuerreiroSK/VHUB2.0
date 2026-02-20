@@ -70,7 +70,7 @@ Columns:
 - `id` (PK)
 - `name` (NOT NULL)
 - `location` (NOT NULL)
-- `contact_email` (NOT NULL)
+- `email` (NOT NULL)
 - `organization_id` (NOT NULL, FK)
 - `created_at` (NOT NULL, default `now()`)
 
