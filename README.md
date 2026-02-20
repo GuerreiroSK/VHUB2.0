@@ -210,7 +210,7 @@ Planned features:
 
 ## 👨‍💻 Author
 
-João Guerreiro
+João Pedro Guerreiro
 
 ---
 
