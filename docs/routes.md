@@ -1,3 +1,5 @@
+# routes.md
+
 # API Routes
 
 This document lists the backend API endpoints currently implemented in the project.
@@ -97,8 +99,50 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ### GET /api/events
 
-- Returns all events
-- Returns empty array if no events exist
+- Purpose:
+  List events, optionally filtered by organization
+
+- Method: GET
+
+- URL:
+  /api/events
+
+- Optional Query Params:
+  - organizationId (positive integer)
+
+- Behavior:
+  - If `organizationId` is missing → returns all events
+  - If `organizationId` is invalid (not a positive integer) → 400 Bad Request
+  - If `organizationId` is valid but organization does not exist → 404 Not Found
+  - If organization exists but has no events → returns empty array
+
+- Example Requests:
+  - /api/events
+  - /api/events?organizationId=2
+
+- Response:
+  - 200 OK
+    [
+      {
+        "id": 1,
+        "name": "Beach Cleanup",
+        "location": "Carcavelos",
+        "organizationId": 2,
+        "email": "event@help.com"
+      }
+    ]
+
+  - 400 Bad Request
+    { "message": "organizationId must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "Organization not found." }
+
+- Notes:
+  - Controller validates query param format (string → number, positive integer)
+  - Service enforces domain meaning (organization must exist when filtering)
+  - Repository performs DB-side filtering (WHERE organization_id = $1)
+  - Returns DTOs via Event.toPublic()
 
 ---
 
@@ -113,7 +157,7 @@ This document lists the backend API endpoints currently implemented in the proje
   [
     {
       "id": 1,
-      "eventName": "Beach Cleanup",
+      "name": "Beach Cleanup",
       "location": "Carcavelos",
       "email": "event@help.com",
       "organization": {
@@ -128,5 +172,6 @@ This document lists the backend API endpoints currently implemented in the proje
   - Data is composed in the service layer
   - Combines Event and Organization entities
   - Returns empty array if no events exist
+
 
 
