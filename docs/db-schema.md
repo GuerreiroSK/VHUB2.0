@@ -1,6 +1,6 @@
 # Database Schema (PostgreSQL)
 
-This document describes the current PostgreSQL schema used by VHUB / Voluntr.
+This document describes the current PostgreSQL schema used by VHUB.
 
 Scope:
 - tables, columns, constraints, and relationships

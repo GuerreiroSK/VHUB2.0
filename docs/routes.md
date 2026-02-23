@@ -1,5 +1,3 @@
-# routes.md
-
 # API Routes
 
 This document lists the backend API endpoints currently implemented in the project.
@@ -172,6 +170,5 @@ This document lists the backend API endpoints currently implemented in the proje
   - Data is composed in the service layer
   - Combines Event and Organization entities
   - Returns empty array if no events exist
-
 
 
