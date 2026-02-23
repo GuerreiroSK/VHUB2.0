@@ -1,5 +1,6 @@
 import db_pool from '../db/index.js';
-import User from '../entities/User.js'
+import User from '../entities/User.js';
+import NotFoundError from '../errors/NotFoundError.js';
 
 
 export async function getUserData() {
@@ -11,7 +12,7 @@ export async function getUserData() {
     const row = result.rows[0]; 
 
     if (!row){
-        throw new Error('No users found.');
+        throw new NotFoundError('No users found.');
     }
 
     const user = new User(

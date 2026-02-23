@@ -1,5 +1,6 @@
 import db_pool from "../db/index.js";
 import Organization from "../entities/Organization.js";
+import NotFoundError from "../errors/NotFoundError.js";
 
 export async function getOrganizationData() {
 
@@ -10,7 +11,7 @@ export async function getOrganizationData() {
     const row = result.rows[0];
 
     if (!row) {
-        throw new Error ('No organization found.');
+        throw new NotFoundError ('No organization found.');
     }
 
     const org = new Organization(

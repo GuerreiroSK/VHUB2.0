@@ -1,7 +1,7 @@
 ## Project Decisions & Rationale
 
 This document records **key technical and architectural decisions**
-made during the development of the VHUB / Voluntr project.
+made during the development of the VHUB project.
 
 Its purpose is to explain *why* choices were made, not just *what* was chosen.
 This document evolves alongside the codebase.
@@ -286,10 +286,28 @@ and enforce strict existence semantics:
 
 **Trade-off**
 - Requires an extra DB lookup (org existence check) when filtering
-- Error mapping initially relies on consistent error messages (later improved via typed errors)
+- Error mapping initially relied on message checks; now standardized with `NotFoundError`
+
+---
+
+## Typed Not-Found Errors
+
+**Decision**
+Introduce a custom `NotFoundError` class and use `instanceof` checks in controllers.
+
+**Why**
+- Avoids brittle error handling based on string comparisons
+- Makes controller error mapping more reliable and consistent
+- Improves maintainability as the codebase grows
+
+**Result**
+- Repositories/services can throw typed not-found errors
+- Controllers translate `NotFoundError` to HTTP 404
+- Unknown errors continue to map to HTTP 500
 
 ---
 
 **Additional Note**
 - Validation is applied at the controller level for request format
 - Repositories focus on data access and row-to-entity mapping
+- Services enforce domain meaning and composition

@@ -1,18 +1,18 @@
-import { getEventTestMessage, listEvents } from '../services/events.service.js'
-import { getEventsWithOrganizations } from '../services/events.service.js';
+import NotFoundError from '../errors/NotFoundError.js';
+import { getEventTestMessage, listEvents, getEventsWithOrganizations } from '../services/events.service.js'
 
 export async function eventTest (req, res) {
 
     const event = await getEventTestMessage();
 
-    res.json(event);
+    return res.json(event);
 }
 
 export async function eventsWithOrganizations (req, res) {
 
     const eventsWithOrgs = await getEventsWithOrganizations();
 
-    res.json(eventsWithOrgs);
+    return res.json(eventsWithOrgs);
 }
 
 export async function getEvents(req, res) {
@@ -20,7 +20,7 @@ export async function getEvents(req, res) {
     const { organizationId } = req.query;
 
     try {
-        if (!organizationId) {
+        if (organizationId === undefined) {
 
             const events = await listEvents();
 
@@ -42,7 +42,7 @@ export async function getEvents(req, res) {
 
     } catch (err) {
 
-        if (err.message === "Organization not found.") {
+        if (err instanceof NotFoundError) {
 
             return res.status(404).json({ message: err.message });
 
