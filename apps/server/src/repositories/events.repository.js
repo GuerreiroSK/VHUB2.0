@@ -1,5 +1,6 @@
 import db_pool from '../db/index.js';
 import Event from '../entities/Event.js'
+import NotFoundError from '../errors/NotFoundError.js';
 
 export async function getEventData() {
     
@@ -10,7 +11,7 @@ export async function getEventData() {
     const row = result.rows[0];
 
     if (!row) {
-        throw new Error ('No events found.');
+        throw new NotFoundError ('No events found.');
     }
 
     const event = new Event (
