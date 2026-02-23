@@ -1,13 +1,29 @@
-import { getEventData } from '../repositories/events.repository.js'
-import { getAllEvents } from '../repositories/events.repository.js';
-import { getAllOrganizations } from '../repositories/organizations.repository.js';
-
+import { getEventData, getAllEvents, getEventsByOrganizationId } from '../repositories/events.repository.js'
+import { getOrganizationById, getAllOrganizations} from '../repositories/organizations.repository.js';
 
 export async function getEventTestMessage() {
 
     const event = await getEventData();
 
     return event.toPublic();
+}
+
+export async function listEvents(organizationId) {
+
+    if (organizationId == null) {
+
+        const events = await getAllEvents();
+
+        return events.map(e => e.toPublic());
+        
+    } else {
+
+        await getOrganizationById(organizationId);
+
+        const events = await getEventsByOrganizationId(organizationId);
+
+        return events.map(e => e.toPublic());    
+    }
 }
 
 export async function getEventsWithOrganizations() {

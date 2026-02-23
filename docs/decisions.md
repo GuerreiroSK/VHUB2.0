@@ -251,18 +251,45 @@ Repositories map database rows into domain entities using array transformations.
 Allow the service layer to compose data from multiple repositories to fulfill complex use cases.
 
 **Why**
-
 - Keeps repositories focused on data access
 - Prevents coupling between entities at the repository level
 - Enables flexible and reusable business logic
 - Supports richer API responses without breaking architecture
 
 **Result**
-
 - New endpoint `/api/events/with-organizations` implemented via service composition
 - Clean separation between data fetching and response shaping
 
 ---
 
+## Filtering via Query Params with Strict Existence Semantics
+
+**Decision**
+Support event filtering by organization using a query param:
+
+`GET /api/events?organizationId=<id>`
+
+and enforce strict existence semantics:
+
+- invalid `organizationId` → 400
+- organization does not exist → 404
+- organization exists but has no events → 200 + []
+
+**Why**
+- Query params are the standard way to express optional filters without multiplying endpoints
+- Strict semantics eliminate ambiguity:
+  - an empty events list should not silently hide a missing organization
+- Keeps responsibilities clean:
+  - Controller validates format (string → number, positive integer)
+  - Service enforces meaning (organization must exist when filtering)
+  - Repository filters in SQL (WHERE organization_id = $1)
+
+**Trade-off**
+- Requires an extra DB lookup (org existence check) when filtering
+- Error mapping initially relies on consistent error messages (later improved via typed errors)
+
+---
+
 **Additional Note**
-- Validation is applied at the repository level to ensure only valid domain entities are returned
+- Validation is applied at the controller level for request format
+- Repositories focus on data access and row-to-entity mapping

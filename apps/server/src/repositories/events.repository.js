@@ -4,7 +4,7 @@ import Event from '../entities/Event.js'
 export async function getEventData() {
     
     const result = await db_pool.query(
-        'SELECT id, name, location, organization_id, contact_email FROM events LIMIT 1'
+        'SELECT id, name, location, organization_id, email FROM events LIMIT 1'
     );
 
     const row = result.rows[0];
@@ -18,7 +18,7 @@ export async function getEventData() {
         row.name,
         row.location,
         row.organization_id,
-        row.contact_email
+        row.email
     );
 
     return event;
@@ -27,7 +27,7 @@ export async function getEventData() {
 export async function getAllEvents() {
 
     const result = await db_pool.query(
-        'SELECT id, name, location, organization_id, contact_email FROM events'
+        'SELECT id, name, location, organization_id, email FROM events'
     );
 
     const rows = result.rows;
@@ -47,9 +47,27 @@ export async function getAllEvents() {
             row.name,
             row.location,
             row.organization_id,
-            row.contact_email
+            row.email
         )
     })
 
     return allEvents;
+}
+
+export async function getEventsByOrganizationId(organizationId) {
+
+    const result = await db_pool.query(
+        'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1',
+        [organizationId]
+    );
+
+    const eventsMap = result.rows.map(row => new Event(
+        row.id,
+        row.name,
+        row.location,
+        row.organization_id,
+        row.email
+    ))
+
+    return eventsMap;
 }
