@@ -3,7 +3,7 @@ import Event from '../entities/Event.js'
 import NotFoundError from '../errors/NotFoundError.js';
 
 export async function getEventData() {
-    
+
     const result = await db_pool.query(
         'SELECT id, name, location, organization_id, email FROM events LIMIT 1'
     );
@@ -11,10 +11,10 @@ export async function getEventData() {
     const row = result.rows[0];
 
     if (!row) {
-        throw new NotFoundError ('No events found.');
+        throw new NotFoundError('No events found.');
     }
 
-    const event = new Event (
+    const event = new Event(
         row.id,
         row.name,
         row.location,
@@ -38,7 +38,7 @@ export async function getEventById(id) {
         throw new NotFoundError('Event not found.');
     }
 
-    const event = new Event (
+    const event = new Event(
         row.id,
         row.name,
         row.location,
@@ -49,11 +49,21 @@ export async function getEventById(id) {
     return event;
 }
 
-export async function getAllEvents() {
+export async function getAllEvents(limit, offset) {
 
-    const result = await db_pool.query(
-        'SELECT id, name, location, organization_id, email FROM events'
-    );
+    let result;
+
+    if (limit === undefined || offset === undefined) {
+        result = await db_pool.query(
+            'SELECT id, name, location, organization_id, email FROM events ORDER BY id'
+        );
+    } else {
+
+        result = await db_pool.query(
+            'SELECT id, name, location, organization_id, email FROM events ORDER BY id LIMIT $1 OFFSET $2',
+            [limit, offset]
+        )
+    }
 
     const rows = result.rows;
 
@@ -64,10 +74,10 @@ export async function getAllEvents() {
     const allEvents = rows.map(row => {
 
         if (!row.organization_id) {
-            throw new Error (`Event with id: ${row.id} has no organization_id`);
+            throw new Error(`Event with id: ${row.id} has no organization_id`);
         }
 
-        return new Event (
+        return new Event(
             row.id,
             row.name,
             row.location,
@@ -79,12 +89,24 @@ export async function getAllEvents() {
     return allEvents;
 }
 
-export async function getEventsByOrganizationId(organizationId) {
+export async function getEventsByOrganizationId(organizationId, limit, offset) {
 
-    const result = await db_pool.query(
-        'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1',
-        [organizationId]
-    );
+    let result;
+
+    if (limit === undefined || offset === undefined) {
+
+        result = await db_pool.query(
+            'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1 ORDER BY id',
+            [organizationId]
+        );
+
+    } else {
+
+        result = await db_pool.query(
+            'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1 ORDER BY id LIMIT $2 OFFSET $3',
+            [organizationId, limit, offset]
+        );
+    }
 
     const eventsMap = result.rows.map(row => new Event(
         row.id,

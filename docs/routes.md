@@ -98,7 +98,7 @@ This document lists the backend API endpoints currently implemented in the proje
 ### GET /api/events
 
 - Purpose:
-  List events, optionally filtered by organization
+  List events (paginated), optionally filtered by organization
 
 - Method: GET
 
@@ -106,17 +106,21 @@ This document lists the backend API endpoints currently implemented in the proje
   /api/events
 
 - Optional Query Params:
+  - page (positive integer, default: 1)
+  - limit (positive integer, default: 20, max: 100)
   - organizationId (positive integer)
 
 - Behavior:
-  - If `organizationId` is missing → returns all events
+  - If `page` or `limit` is invalid → 400 Bad Request
+  - If `organizationId` is missing → returns paginated events (page/limit)
   - If `organizationId` is invalid (not a positive integer) → 400 Bad Request
   - If `organizationId` is valid but organization does not exist → 404 Not Found
   - If organization exists but has no events → returns empty array
 
 - Example Requests:
   - /api/events
-  - /api/events?organizationId=2
+  - /api/events?page=2&limit=10
+  - /api/events?organizationId=2&page=1&limit=10
 
 - Response:
   - 200 OK
@@ -131,6 +135,9 @@ This document lists the backend API endpoints currently implemented in the proje
     ]
 
   - 400 Bad Request
+    { "message": "page and limit must be positive integers (limit max 100)" }
+
+  - 400 Bad Request
     { "message": "organizationId must be a positive integer" }
 
   - 404 Not Found
@@ -138,8 +145,9 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Notes:
   - Controller validates query param format (string → number, positive integer)
+  - Controller applies pagination defaults (page=1, limit=20) and cap (limit max 100)
   - Service enforces domain meaning (organization must exist when filtering)
-  - Repository performs DB-side filtering (WHERE organization_id = $1)
+  - Repository performs DB-side filtering and pagination (ORDER BY id LIMIT/OFFSET)
   - Returns DTOs via Event.toPublic()
 
 ---
@@ -215,5 +223,3 @@ This document lists the backend API endpoints currently implemented in the proje
   - Data is composed in the service layer
   - Combines Event and Organization entities
   - Returns empty array if no events exist
-
-

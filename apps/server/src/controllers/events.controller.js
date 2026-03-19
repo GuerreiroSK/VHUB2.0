@@ -1,5 +1,5 @@
 import NotFoundError from '../errors/NotFoundError.js';
-import { getEventTestMessage, listEvents, getEventsWithOrganizations, getEventById as getEventByIdService } from '../services/events.service.js'
+import { getEventTestMessage, getEventsWithOrganizations, getEventById as getEventByIdService, listEventsPaginated } from '../services/events.service.js'
 
 export async function eventTest (req, res) {
 
@@ -47,12 +47,26 @@ export async function eventsWithOrganizations (req, res) {
 
 export async function getEvents(req, res) {
 
-    const { organizationId } = req.query;
+    const { page, limit, organizationId } = req.query;
+
+    const pageNum = page === undefined ? 1 : Number(page);
+
+    const limitNum = limit === undefined ? 20 : Number(limit);
+
+    const pageInvalid = Number.isNaN(pageNum) || !Number.isInteger(pageNum) || pageNum <= 0;
+
+    const limitInvalid = Number.isNaN(limitNum) || !Number.isInteger(limitNum) || limitNum <= 0 || limitNum > 100;
+
+    if (pageInvalid || limitInvalid ) {
+
+        return res.status(400).json({ message: 'page and limit must be positive integers (limit max 100)'});
+    } 
 
     try {
+
         if (organizationId === undefined) {
 
-            const events = await listEvents();
+            const events = await listEventsPaginated({ page: pageNum, limit: limitNum });
 
             return res.json(events);
 
@@ -65,7 +79,7 @@ export async function getEvents(req, res) {
                 return res.status(400).json({ message: 'organizationId must be a positive integer' });
             }
 
-            const events = await listEvents(id);
+            const events = await listEventsPaginated({ page: pageNum, limit: limitNum, organizationId: id });
 
             return res.json(events);
         }
