@@ -25,6 +25,30 @@ export async function getEventData() {
     return event;
 }
 
+export async function getEventById(id) {
+
+    const result = await db_pool.query(
+        'SELECT id, name, location, organization_id, email FROM events WHERE id = $1',
+        [id]
+    )
+
+    const row = result.rows[0];
+
+    if (!row) {
+        throw new NotFoundError('Event not found.');
+    }
+
+    const event = new Event (
+        row.id,
+        row.name,
+        row.location,
+        row.organization_id,
+        row.email
+    );
+
+    return event;
+}
+
 export async function getAllEvents() {
 
     const result = await db_pool.query(
