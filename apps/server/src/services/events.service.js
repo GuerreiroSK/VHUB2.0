@@ -67,3 +67,23 @@ export async function getEventsWithOrganizations() {
         }
     });
 }
+
+export async function listEventsPaginated({page, limit, organizationId}) {
+
+    let offset = (page - 1) * limit;
+
+    if (organizationId === undefined) {
+
+        const events = await getAllEvents(limit, offset);
+
+        return events.map(e => e.toPublic());
+
+    } else {
+
+        await getOrganizationById(organizationId);
+
+        const events = await getEventsByOrganizationId(organizationId, limit, offset);
+
+        return events.map(e => e.toPublic());
+    }
+}
