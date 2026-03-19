@@ -1,9 +1,16 @@
-import { getEventData, getAllEvents, getEventsByOrganizationId } from '../repositories/events.repository.js'
+import { getEventData, getAllEvents, getEventsByOrganizationId, getEventById as getEventByIdRepo } from '../repositories/events.repository.js'
 import { getOrganizationById, getAllOrganizations} from '../repositories/organizations.repository.js';
 
 export async function getEventTestMessage() {
 
     const event = await getEventData();
+
+    return event.toPublic();
+}
+
+export async function getEventById(id) {
+
+    const event = await getEventByIdRepo(id);
 
     return event.toPublic();
 }
