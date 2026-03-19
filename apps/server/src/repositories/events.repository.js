@@ -89,12 +89,24 @@ export async function getAllEvents(limit, offset) {
     return allEvents;
 }
 
-export async function getEventsByOrganizationId(organizationId) {
+export async function getEventsByOrganizationId(organizationId, limit, offset) {
 
-    const result = await db_pool.query(
-        'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1',
-        [organizationId]
-    );
+    let result;
+
+    if (limit === undefined || offset === undefined) {
+
+        result = await db_pool.query(
+            'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1 ORDER BY id',
+            [organizationId]
+        );
+
+    } else {
+
+        result = await db_pool.query(
+            'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1 ORDER BY id LIMIT $2 OFFSET $3',
+            [organizationId, limit, offset]
+        );
+    }
 
     const eventsMap = result.rows.map(row => new Event(
         row.id,
