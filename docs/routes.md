@@ -144,6 +144,51 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ---
 
+### GET /api/events/:id
+
+- Purpose:
+  Retrieve a single event by its id
+
+- Method: GET
+
+- URL:
+  /api/events/:id
+
+- Route Params:
+  - id (positive integer)
+
+- Behavior:
+  - If `id` is invalid (not a positive integer) → 400 Bad Request
+  - If no event exists for that id → 404 Not Found
+  - If event exists → 200 OK with the event DTO
+
+- Example Requests:
+  - /api/events/1
+  - /api/events/99999
+
+- Response:
+  - 200 OK
+    {
+      "id": 1,
+      "name": "Beach Cleanup",
+      "location": "Carcavelos",
+      "organizationId": 2,
+      "email": "event@help.com"
+    }
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "Event not found." }
+
+- Notes:
+  - Controller validates route param format (string → number, positive integer)
+  - Service returns DTO via Event.toPublic()
+  - Repository performs DB lookup (WHERE id = $1) and throws NotFoundError when missing
+
+---
+
 ### GET /api/events/with-organizations
 
 - Purpose:
