@@ -89,6 +89,24 @@ export async function getAllEvents(limit, offset) {
     return allEvents;
 }
 
+export async function getAllEventsByOrganizationId(id) {
+
+    const result = await db_pool.query(
+        'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1',
+        [id]
+    );
+
+    const allEventsMap = result.rows.map( row => new Event(
+        row.id,
+        row.name,
+        row.location,
+        row.organization_id,
+        row.email
+    ))
+
+    return allEventsMap;
+}
+
 export async function getEventsByOrganizationId(organizationId, limit, offset) {
 
     let result;
