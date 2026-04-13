@@ -74,6 +74,43 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ---
 
+### GET /api/organizations/:id/events
+
+- Purpose: 
+  Get all events by organization id
+
+- Method: GET
+
+- URL:
+  /api/organizations/:id/events
+
+- Route Params:
+  - id (positive integer)
+
+- Behavior:
+  - If `id` is valid return events 
+  - If any error -> returns 500 Internal Server Error
+
+- Example Requests:
+  - /api/organizations/1/events
+
+- Response:
+  - 200 OK
+  [
+    {
+        "id": 1,
+        "eventName": "Beach Cleanup",
+        "location": "Carcavelos",
+        "organizationId": 1,
+        "email": "event@help.com"
+    }
+]
+
+  - 500 Internal Server Error
+    { "message": "Internal Server Error." }
+
+---
+
 ## Events
 
 ### GET /api/events/event_test
