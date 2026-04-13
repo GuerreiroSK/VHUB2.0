@@ -290,6 +290,28 @@ and enforce strict existence semantics:
 
 ---
 
+## Filtering with Route Parameters
+
+**Decision**  
+Support organization-specific event retrieval using a route parameter:
+
+`GET /api/organizations/:id/events`
+
+**Why**
+- Route parameters are appropriate when identifying a specific parent resource and accessing a related collection beneath it
+- This makes the URL expressive and easy to understand
+- It reflects the relationship that the events belong to a specific organization
+
+**Trade-off**
+- The endpoint becomes coupled to the current resource hierarchy
+- If the relationship or API structure changes later, the URL design may also need to change
+
+**Result**
+- Events can be retrieved directly for a specific organization through a clear and predictable endpoint
+- The API is easier to read than a more generic endpoint with filtering logic
+
+---
+
 ## Typed Not-Found Errors
 
 **Decision**

@@ -1,4 +1,4 @@
-import { getOrganizationTestMessage } from '../services/organizations.service.js'
+import { getOrganizationTestMessage, getAllEventsByOrganizationId as getEventsByOrgId } from '../services/organizations.service.js'
 import NotFoundError from '../errors/NotFoundError.js';
 
 export async function organizationTest(req, res) {
@@ -17,5 +17,20 @@ export async function organizationTest(req, res) {
 
             return res.status(500).json({ message: 'Internal server error.' });
         }
+    }
+}
+
+export async function getAllEventsByOrganizationId(req, res) {
+
+    try {
+        const id = req.params.id
+
+        const allEvents = await getEventsByOrgId(id);
+
+        return res.json(allEvents)
+
+    } catch (err) {
+        
+        return res.status(500).json({ message: 'Internal server error.'});
     }
 }
