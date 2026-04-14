@@ -312,6 +312,32 @@ Support organization-specific event retrieval using a route parameter:
 
 ---
 
+## Validation and Error Handling
+
+**Decision**
+
+- Differentiate business logic (service) from validation (controller). The service enforces domain meaning while the controller validates input format.
+
+**Why**
+
+- These are two distinct responsibilities. The controller protects against bad client input — wrong types, invalid formats. The service protects against invalid domain scenarios — organization not found, no events returned.
+
+**Trade-off**
+
+- Number() was chosen over parseInt() because it validates the entire input as a number, while parseInt() stops at the first non-numeric character and silently accepts invalid input like "123abc".
+- Checking organization existence requires an extra DB call before fetching events. This adds a small performance cost but ensures correct and meaningful error responses.
+
+**Result**
+
+- The endpoint now handles the full range of HTTP responses:
+
+- 200 OK — valid request with results
+- 400 Bad Request — invalid input format
+- 404 Not Found — organization does not exist
+- 500 Internal Server Error — unexpected server failure
+
+---
+
 ## Typed Not-Found Errors
 
 **Decision**

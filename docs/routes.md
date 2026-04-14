@@ -88,11 +88,17 @@ This document lists the backend API endpoints currently implemented in the proje
   - id (positive integer)
 
 - Behavior:
-  - If `id` is valid return events 
+  - If `id` is valid return events - 200 OK 
+  - If `id` is invalid returns - 400 Bad Request
+  - If `id` is valid but doesn't exist - 404 Not Found
   - If any error -> returns 500 Internal Server Error
 
 - Example Requests:
   - /api/organizations/1/events
+  - /api/organizations/-1/events 
+  - /api/organizations/abc/events 
+  - /api/organizations/9999/events 
+
 
 - Response:
   - 200 OK
@@ -105,9 +111,19 @@ This document lists the backend API endpoints currently implemented in the proje
         "email": "event@help.com"
     }
 ]
+ 
+  - 400 Bad Request
+  {
+    "message": "id must be a positive integer"
+  }  
+
+  - 404 Not Found
+  {
+    "message": "Organization not found"
+  }
 
   - 500 Internal Server Error
-    { "message": "Internal Server Error." }
+  { "message": "Internal Server Error." }
 
 ---
 
