@@ -35,7 +35,7 @@ export async function getOrganizationById(id) {
     const row = result.rows[0];
 
     if (!row) {
-        throw new Error ('Organization not found.');
+        throw new NotFoundError ('Organization not found.');
     }
 
     return new Organization(

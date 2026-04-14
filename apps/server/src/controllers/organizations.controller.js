@@ -37,6 +37,11 @@ export async function getAllEventsByOrganizationId(req, res) {
 
     } catch (err) {
         
+        if (err instanceof NotFoundError) {
+
+            return res.status(404).json({ message: 'Organization not found'})
+        }
+
         return res.status(500).json({ message: 'Internal server error.'});
     }
 }
