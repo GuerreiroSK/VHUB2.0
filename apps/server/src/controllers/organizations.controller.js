@@ -22,15 +22,26 @@ export async function organizationTest(req, res) {
 
 export async function getAllEventsByOrganizationId(req, res) {
 
-    try {
-        const id = req.params.id
+     const organizationId = Number(req.params.id)
 
-        const allEvents = await getEventsByOrgId(id);
+        if (!Number.isInteger(organizationId) || organizationId <= 0) {
+            
+            return res.status(400).json({ message: "id must be a positive integer" });
+        }
+
+    try {
+
+        const allEvents = await getEventsByOrgId(organizationId);
 
         return res.json(allEvents)
 
     } catch (err) {
         
+        if (err instanceof NotFoundError) {
+
+            return res.status(404).json({ message: 'Organization not found'})
+        }
+
         return res.status(500).json({ message: 'Internal server error.'});
     }
 }
