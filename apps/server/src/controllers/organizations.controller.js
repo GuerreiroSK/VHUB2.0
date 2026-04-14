@@ -22,10 +22,16 @@ export async function organizationTest(req, res) {
 
 export async function getAllEventsByOrganizationId(req, res) {
 
-    try {
-        const id = req.params.id
+     const organizationId = Number(req.params.id)
 
-        const allEvents = await getEventsByOrgId(id);
+        if (!Number.isInteger(organizationId) || organizationId <= 0) {
+            
+            return res.status(400).json({ message: "id must be a positive integer" });
+        }
+
+    try {
+
+        const allEvents = await getEventsByOrgId(organizationId);
 
         return res.json(allEvents)
 
