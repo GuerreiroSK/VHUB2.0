@@ -1,4 +1,4 @@
-import { getUserTestMessage } from "../services/users.service.js";
+import { getUserTestMessage, getAllUsers as getAllUsersService } from "../services/users.service.js";
 import NotFoundError from "../errors/NotFoundError.js";
 
 export async function userTest(req, res) {
@@ -18,5 +18,18 @@ export async function userTest(req, res) {
 
             return res.status(500).json({ message: 'Internal server error.' });
         }   
+    }
+}
+
+export async function getAllUsers(req, res) {
+
+    try {
+        const users = await getAllUsersService();
+
+        return res.json(users);
+
+    } catch (err) {
+
+            return res.status(500).json({ message: 'Internal server error.'}); 
     }
 }
