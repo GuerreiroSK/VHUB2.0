@@ -41,8 +41,31 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ### GET /api/users
 
-- Returns all users
-- Returns empty array if no users exist
+- Purpose:
+  Retrieve all registered users
+
+- Method: GET
+
+- URL:
+  /api/users
+
+- Behavior:
+  - Returns all users as an array
+  - Returns empty array if no users exist
+
+- Response:
+  - 200 OK
+    [
+      {
+        "id": 1,
+        "name": "João",
+        "email": "joao@email.com"
+      }
+    ]
+
+- Notes:
+  - Password is never exposed — controlled by User.toPublic()
+  - No pagination yet — will be addressed in a future iteration
 
 ---
 
