@@ -69,6 +69,52 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ---
 
+### GET /api/users/:id
+
+- Purpose:
+  Retrieve a single user by their id
+
+- Method: GET
+
+- URL:
+  /api/users/:id
+
+- Route Params:
+  - id (positive integer)
+
+- Behavior:
+  - If `id` is invalid (not a positive integer) → 400 Bad Request
+  - If no user exists for that id → 404 Not Found
+  - If user exists → 200 OK
+
+- Example Requests:
+  - /api/users/1
+  - /api/users/abc
+  - /api/users/9999
+
+- Response:
+  - 200 OK
+    {
+      "id": 1,
+      "name": "João",
+      "email": "joao@email.com"
+    }
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "User not found." }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error." }
+
+- Notes:
+  - Password is never exposed — controlled by User.toPublic()
+  - Controller validates format, service enforces domain meaning
+  
+---
+
 ## Organizations
 
 ### GET /api/organizations/organization_test

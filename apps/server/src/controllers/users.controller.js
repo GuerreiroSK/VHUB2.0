@@ -1,4 +1,4 @@
-import { getUserTestMessage, getAllUsers as getAllUsersService } from "../services/users.service.js";
+import { getUserTestMessage, getAllUsers as getAllUsersService, getUserById as getUserByIdService } from "../services/users.service.js";
 import NotFoundError from "../errors/NotFoundError.js";
 
 export async function userTest(req, res) {
@@ -31,5 +31,35 @@ export async function getAllUsers(req, res) {
     } catch (err) {
 
             return res.status(500).json({ message: 'Internal server error.'}); 
+    }
+}
+
+export async function getUserById (req, res) {
+
+    const { id } = req.params;
+
+    const userId = Number(id);
+
+    if (!Number.isInteger(userId) || userId <= 0) {
+
+        return res.status(400).json({ message: 'id must be a positive integer' });
+    }
+
+    try {
+
+        const user = await getUserByIdService(userId);
+
+        return res.json(user);
+
+    } catch (err) {
+
+        if (err instanceof NotFoundError) {
+
+            return res.status(404).json({ message: err.message });
+
+        } else {
+
+            return res.status(500).json({ message: 'Internal server error.' });
+        }
     }
 }

@@ -53,3 +53,25 @@ export async function getAllUsers() {
 
     return allUsers;
 }
+
+export async function getUserById(id) {
+
+    const result = await db_pool.query(
+        'SELECT id, name, email FROM users WHERE id = $1',
+        [id]
+    )
+
+    const row = result.rows[0];
+
+    if (!row) {
+        throw new NotFoundError('User not found.')
+    }
+
+    const user = new User(
+        row.id,
+        row.name,
+        row.email
+    );
+
+    return user;
+}
