@@ -76,3 +76,40 @@ export async function getAllOrganizations() {
     
     return allOrganizations;
 }
+
+export async function createOrganization(name, email, description, location) {
+
+    const result = await db_pool.query(
+        'INSERT INTO organizations (name, email, description, location) VALUES ($1 , $2, $3, $4) RETURNING id, name, email, description, location',
+        [name, email, description, location]
+    );
+
+    const row = result.rows[0];
+
+    const newOrganzation = new Organization(
+
+            row.id,
+            row.name,
+            row.email,
+            row.description,
+            row.location
+        )
+
+    return newOrganzation;
+}
+
+export async function getOrganizationByEmail(email) {
+
+    const result = await db_pool.query(
+        'SELECT email FROM organizations WHERE email = $1',
+        [email]
+    );
+
+    const row = result.rows[0];
+
+    if (!row) {
+        return null
+    }
+
+    return row;
+}
