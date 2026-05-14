@@ -1,4 +1,4 @@
-import { getOrganizationData, getOrganizationById, getAllOrganizations as getAllOrganizationsRepo} from '../repositories/organizations.repository.js'
+import { getOrganizationData, getOrganizationById as getOrganizationByIdRepo, getAllOrganizations as getAllOrganizationsRepo} from '../repositories/organizations.repository.js'
 import { getAllEventsByOrganizationId as getEventsByOrganizationId } from '../repositories/events.repository.js';
 
 
@@ -24,4 +24,11 @@ export async function getAllOrganizations() {
     const organizations = await getAllOrganizationsRepo();
 
     return organizations.map(organization => organization.toPublic());
+}
+
+export async function getOrganizationById(id) {
+
+    const organization = await getOrganizationByIdRepo(id);
+
+    return organization.toPublic();
 }
