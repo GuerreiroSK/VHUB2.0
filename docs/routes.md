@@ -272,6 +272,63 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ---
 
+### POST /api/organizations
+
+- Purpose:
+  Create a new organization
+
+- Method: POST
+
+- URL:
+  /api/organizations
+
+- Body (JSON):
+  {
+    "name": "Help Org",
+    "email": "help@org.com",
+    "description": "Community Support",
+    "location": "Lisbon"
+  }
+
+- Required Fields:
+  - name
+  - email
+  - location
+
+- Optional Fields:
+  - description
+
+- Behavior:
+  - If required fields are missing → 400 Bad Request
+  - If email already exists → 409 Conflict
+  - If successful → 201 Created with new organization
+
+- Response:
+  - 201 Created
+    {
+      "id": 2,
+      "name": "Help Org",
+      "email": "help@org.com",
+      "description": "Community Support",
+      "location": "Lisbon"
+    }
+
+  - 400 Bad Request
+    { "message": "Name, Email and Location fields cannot be empty" }
+
+  - 409 Conflict
+    { "message": "This email already exists/registered" }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error." }
+
+- Notes:
+  - Password is not accepted — organizations don't authenticate directly
+  - Users with organization roles will manage organizations after auth is implemented
+  - Controller validates required fields, service enforces email uniqueness
+
+---
+
 ## Events
 
 ### GET /api/events/event_test
