@@ -359,3 +359,43 @@ Introduce a custom `NotFoundError` class and use `instanceof` checks in controll
 - Validation is applied at the controller level for request format
 - Repositories focus on data access and row-to-entity mapping
 - Services enforce domain meaning and composition
+
+## Typed Error: ConflictError
+
+**Decision**
+- Introduce a custom `ConflictError` class alongside the existing `NotFoundError`
+
+**Why**
+- Write operations introduce a new category of domain error — resource conflicts
+- A duplicate email is not a server error (500) or a bad request (400)
+- It needs its own semantic meaning: 409 Conflict
+- Using a typed error keeps the controller error mapping clean and reliable
+
+**Result**
+- `ConflictError` extends `Error` with `name: 'ConflictError'`
+- Service throws `ConflictError` when email already exists
+- Controller catches it with `instanceof ConflictError` and returns 409
+- Pattern is consistent with `NotFoundError` → 404 mapping
+
+## First Write Operation — POST /api/organizations
+
+**Decision**
+- Introduce the first write operation to the API: `POST /api/organizations`
+- Organizations do not accept a password field — authentication is handled by Users
+
+**Why**
+- The API was read-only until now — no way to create, update or delete data
+- CRUD foundations are needed before auth and frontend connection
+- Organizations are resources, not actors — they don't authenticate directly
+- Users with organization roles will manage organizations after auth is implemented
+
+**Trade-off**
+- Email uniqueness requires an extra DB lookup before inserting
+- Adds a small performance cost but prevents duplicate organizations
+
+**Result**
+- First POST endpoint implemented across all layers
+- ConflictError introduced for email duplication — maps to 409 in controller
+- Controller validates required fields (name, email, location)
+- Service enforces email uniqueness business rule
+- Repository uses INSERT ... RETURNING to get the newly created entity back

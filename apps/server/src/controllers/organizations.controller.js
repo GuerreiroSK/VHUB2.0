@@ -1,5 +1,6 @@
-import { getOrganizationTestMessage, getAllEventsByOrganizationId as getEventsByOrgId, getAllOrganizations as getAllOrganizationsService, getOrganizationById as getOrganizationByIdService } from '../services/organizations.service.js'
+import { getOrganizationTestMessage, getAllEventsByOrganizationId as getEventsByOrgId, getAllOrganizations as getAllOrganizationsService, getOrganizationById as getOrganizationByIdService, createOrganization as createOrganizationService } from '../services/organizations.service.js'
 import NotFoundError from '../errors/NotFoundError.js';
+import ConflictError from '../errors/ConflictError.js';
 
 export async function organizationTest(req, res) {
 
@@ -83,6 +84,33 @@ export async function getOrganizationById(req, res) {
 
             return res.status(404).json({message: 'Organization not found'});
 
+        } else {
+
+            return res.status(500).json({message: 'Internal server error'});
+        }
+    }
+}
+
+export async function createOrganization(req, res) {
+
+    const {name, email, description, location} = req.body;
+
+    if (!name || !email || !location) {
+
+        return res.status(400).json({message: 'Name, Email and Location fields cannot be empty'});
+    }
+
+    try {
+        
+        const createdOrganzation = await createOrganizationService(name, email, description, location);
+        
+        return res.status(201).json(createdOrganzation);
+
+    } catch (err) {
+
+        if (err instanceof ConflictError) {
+
+            return res.status(409).json({message: err.message});
         } else {
 
             return res.status(500).json({message: 'Internal server error'});
