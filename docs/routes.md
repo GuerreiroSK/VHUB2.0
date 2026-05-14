@@ -138,8 +138,36 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ### GET /api/organizations
 
-- Returns all organizations
-- Returns empty array if no organizations exist
+- Purpose:
+  Retrieve all organizations
+
+- Method: GET
+
+- URL:
+  /api/organizations
+
+- Behavior:
+  - Returns all organizations as an array
+  - Returns empty array if no organizations exist
+
+- Response:
+  - 200 OK
+    [
+      {
+        "id": 1,
+        "name": "Help Org",
+        "email": "help@org.com",
+        "description": "We help people",
+        "location": "Lisbon"
+      }
+    ]
+
+  - 500 Internal Server Error
+    { "message": "Internal server error." }
+
+- Notes:
+  - No pagination yet — will be addressed in a future iteration
+  - Returns empty array when no organizations exist — absence of data is not an error
 
 ---
 
