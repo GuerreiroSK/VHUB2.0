@@ -329,6 +329,71 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ---
 
+### PATCH /api/organizations/:id
+
+- Purpose:
+  Partially update an existing organization by its id
+
+- Method: PATCH
+
+- URL:
+  /api/organizations/:id
+
+- Route Params:
+  - id (positive integer)
+
+- Body (JSON — all fields optional, at least one required):
+  {
+    "name": "Updated Org Name",
+    "email": "new@org.com",
+    "description": "Updated description",
+    "location": "Porto"
+  }
+
+- Behavior:
+  - If `id` is invalid (not a positive integer) → 400 Bad Request
+  - If body is empty (no fields provided) → 400 Bad Request
+  - If email already belongs to another organization → 409 Conflict
+  - If organization does not exist → 404 Not Found
+  - If successful → 200 OK with updated organization
+
+- Example Requests:
+  - PATCH /api/organizations/1 with { "name": "New Name" }
+  - PATCH /api/organizations/1 with {}
+  - PATCH /api/organizations/9999 with { "name": "New Name" }
+
+- Response:
+  - 200 OK
+    {
+      "id": 1,
+      "name": "Updated Org Name",
+      "email": "help@org.com",
+      "description": "Community Support",
+      "location": "Lisbon"
+    }
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 400 Bad Request
+    { "message": "No fields were updated" }
+
+  - 404 Not Found
+    { "message": "Organization not found." }
+
+  - 409 Conflict
+    { "message": "This email already exists/registered" }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error." }
+
+- Notes:
+  - PATCH used instead of PUT — partial updates only, send only fields to change
+  - Email uniqueness check skips the current organization to allow same-email updates
+  - Dynamic SQL built in repository using Object.entries()
+
+---
+
 ## Events
 
 ### GET /api/events/event_test

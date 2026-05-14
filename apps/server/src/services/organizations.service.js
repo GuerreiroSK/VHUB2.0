@@ -1,4 +1,4 @@
-import { getOrganizationData, getOrganizationById as getOrganizationByIdRepo, getAllOrganizations as getAllOrganizationsRepo, getOrganizationByEmail, createOrganization as createOrganizationRepo} from '../repositories/organizations.repository.js'
+import { getOrganizationData, getOrganizationById as getOrganizationByIdRepo, getAllOrganizations as getAllOrganizationsRepo, getOrganizationByEmail, createOrganization as createOrganizationRepo, updateOrganization as updatedOrganizationRepo} from '../repositories/organizations.repository.js'
 import { getAllEventsByOrganizationId as getEventsByOrganizationId } from '../repositories/events.repository.js';
 import ConflictError from '../errors/ConflictError.js';
 
@@ -36,16 +36,34 @@ export async function getOrganizationById(id) {
 
 export async function createOrganization(name, email, description, location) {
 
-    const checkEmail = await getOrganizationByEmail(email)
+    const checkEmail = await getOrganizationByEmail(email);
 
     if (checkEmail === null) {
 
-        const createdOrganzation = await createOrganizationRepo(name, email, description, location);
+        const createdOrganization = await createOrganizationRepo(name, email, description, location);
 
-        return createdOrganzation.toPublic();
+        return createdOrganization.toPublic();
         
     } else {
 
         throw new ConflictError('This email already exists/registered');
     }
+}
+
+export async function updateOrganization(id, fields) {
+
+    if (fields.email) {
+
+        const checkEmail = await getOrganizationByEmail(fields.email);
+
+        if ( checkEmail !== null && id !== checkEmail.id) {
+
+            throw new ConflictError('This email is already exists.')
+        }
+
+    }
+
+    const updatedOrganization = await updatedOrganizationRepo(id, fields);
+
+    return updatedOrganization.toPublic();
 }

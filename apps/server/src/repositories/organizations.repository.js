@@ -113,3 +113,37 @@ export async function getOrganizationByEmail(email) {
 
     return row;
 }
+
+export async function updateOrganization(id, fields) {
+
+    const setClauses = [];
+    const values = [];
+
+    Object.entries(fields).forEach(([key, value]) => {
+
+        setClauses.push(`${key} = $${setClauses.length + 1}`);
+        values.push(value);
+
+    });
+
+    values.push(id);
+
+    const result = await db_pool.query(
+        `UPDATE organizations SET ${setClauses.join(', ')} WHERE id = $${values.length} RETURNING id, name, email, description, location`,
+        values
+    );
+
+    const row = result.rows[0];
+
+    if (!row) {
+        throw new NotFoundError ('Organization not found.');
+    }
+
+    return new Organization(
+        row.id,
+        row.name,
+        row.email,
+        row.description,
+        row.location
+    );
+}
