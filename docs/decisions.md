@@ -399,3 +399,25 @@ Introduce a custom `NotFoundError` class and use `instanceof` checks in controll
 - Controller validates required fields (name, email, location)
 - Service enforces email uniqueness business rule
 - Repository uses INSERT ... RETURNING to get the newly created entity back
+
+## PATCH vs PUT for Update Operations
+
+**Decision**
+Use `PATCH` instead of `PUT` for organization update operations.
+
+**Why**
+- `PUT` replaces the entire resource — the client must send all fields
+- `PATCH` allows partial updates — the client sends only the fields they want to change
+- For a real app, forcing the client to send all fields on every update is impractical
+- Users should be able to update just a name or just a location without touching other fields
+
+**Trade-off**
+- `PATCH` requires dynamic SQL query building — more complex than a fixed `UPDATE` statement
+- Fields object must be built dynamically in the controller and query built dynamically in the repository
+- Empty body must be explicitly caught and rejected
+
+**Result**
+- `PATCH /api/organizations/:id` accepts any combination of `name`, `email`, `description`, `location`
+- Repository builds `SET` clauses dynamically using `Object.entries()`
+- Controller rejects empty body with 400 before reaching the service
+- Email uniqueness check skips the current organization to allow same-email updates
