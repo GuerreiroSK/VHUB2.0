@@ -171,6 +171,54 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ---
 
+### GET /api/organizations/:id
+
+- Purpose:
+  Retrieve a single organization by its id
+
+- Method: GET
+
+- URL:
+  /api/organizations/:id
+
+- Route Params:
+  - id (positive integer)
+
+- Behavior:
+  - If `id` is invalid (not a positive integer) → 400 Bad Request
+  - If no organization exists for that id → 404 Not Found
+  - If organization exists → 200 OK
+
+- Example Requests:
+  - /api/organizations/1
+  - /api/organizations/abc
+  - /api/organizations/9999
+
+- Response:
+  - 200 OK
+    {
+      "id": 1,
+      "name": "Help Org",
+      "email": "help@org.com",
+      "description": "Community Support",
+      "location": "Lisbon"
+    }
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "Organization not found." }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error." }
+
+- Notes:
+  - Controller validates format, service enforces domain meaning
+  - NotFoundError thrown by repository, caught and mapped to 404 in controller
+
+---
+
 ### GET /api/organizations/:id/events
 
 - Purpose: 
