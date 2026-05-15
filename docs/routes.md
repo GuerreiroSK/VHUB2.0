@@ -394,6 +394,48 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ---
 
+### DELETE /api/organizations/:id
+
+- Purpose:
+  Soft delete an organization by its id
+
+- Method: DELETE
+
+- URL:
+  /api/organizations/:id
+
+- Route Params:
+  - id (positive integer)
+
+- Behavior:
+  - If `id` is invalid (not a positive integer) → 400 Bad Request
+  - If organization does not exist → 404 Not Found
+  - If successful → 204 No Content
+
+- Example Requests:
+  - DELETE /api/organizations/1
+  - DELETE /api/organizations/abc
+  - DELETE /api/organizations/9999
+
+- Response:
+  - 204 No Content (no body)
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "Organization not found." }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error." }
+
+- Notes:
+  - Soft delete — sets deleted_at timestamp, data is preserved
+  - Deleted organizations are excluded from all GET queries
+  - Hard delete not used — data retained for analytics and recovery
+
+---
+
 ## Events
 
 ### GET /api/events/event_test
