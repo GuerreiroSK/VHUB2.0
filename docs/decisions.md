@@ -353,12 +353,12 @@ Introduce a custom `NotFoundError` class and use `instanceof` checks in controll
 - Controllers translate `NotFoundError` to HTTP 404
 - Unknown errors continue to map to HTTP 500
 
----
-
 **Additional Note**
 - Validation is applied at the controller level for request format
 - Repositories focus on data access and row-to-entity mapping
 - Services enforce domain meaning and composition
+
+---
 
 ## Typed Error: ConflictError
 
@@ -376,6 +376,8 @@ Introduce a custom `NotFoundError` class and use `instanceof` checks in controll
 - Service throws `ConflictError` when email already exists
 - Controller catches it with `instanceof ConflictError` and returns 409
 - Pattern is consistent with `NotFoundError` → 404 mapping
+
+---
 
 ## First Write Operation — POST /api/organizations
 
@@ -400,6 +402,8 @@ Introduce a custom `NotFoundError` class and use `instanceof` checks in controll
 - Service enforces email uniqueness business rule
 - Repository uses INSERT ... RETURNING to get the newly created entity back
 
+---
+
 ## PATCH vs PUT for Update Operations
 
 **Decision**
@@ -421,3 +425,26 @@ Use `PATCH` instead of `PUT` for organization update operations.
 - Repository builds `SET` clauses dynamically using `Object.entries()`
 - Controller rejects empty body with 400 before reaching the service
 - Email uniqueness check skips the current organization to allow same-email updates
+
+---
+
+## Soft Delete Strategy
+
+**Decision**
+Use soft delete for organizations — set `deleted_at` timestamp instead of removing the row.
+
+**Why**
+- Data is preserved for analytics, audit trails, and potential recovery
+- Hard deletes are irreversible — soft deletes are safer in production
+- Aligns with real-world application patterns
+
+**Trade-off**
+- Requires `deleted_at` column in the database schema
+- All GET queries must filter `WHERE deleted_at IS NULL` to exclude deleted records
+- Slightly more complex than a simple `DELETE` statement
+
+**Result**
+- `deleted_at` column added to organizations table via `ALTER TABLE`
+- All GET queries updated to filter out soft deleted organizations
+- Repository uses `rowCount` to detect if the organization existed before deleting
+- 204 No Content returned on successful delete — no body needed
