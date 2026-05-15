@@ -28,7 +28,7 @@ export async function getOrganizationData() {
 export async function getOrganizationById(id) {
 
     const result = await db_pool.query(
-        'SELECT id, name, email, description, location FROM organizations WHERE id = $1',
+        'SELECT id, name, email, description, location FROM organizations WHERE id = $1 AND deleted_at IS NULL',
         [id]
     );
 
@@ -50,7 +50,7 @@ export async function getOrganizationById(id) {
 export async function getAllOrganizations() {
 
     const result = await db_pool.query(
-        'SELECT id, name, email, description, location FROM organizations'
+        'SELECT id, name, email, description, location FROM organizations WHERE deleted_at IS NULL'
     );
 
     const rows = result.rows;
@@ -101,7 +101,7 @@ export async function createOrganization(name, email, description, location) {
 export async function getOrganizationByEmail(email) {
 
     const result = await db_pool.query(
-        'SELECT email FROM organizations WHERE email = $1',
+        'SELECT email FROM organizations WHERE email = $1 AND deleted_at IS NULL',
         [email]
     );
 
