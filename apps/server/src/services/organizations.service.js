@@ -1,4 +1,12 @@
-import { getOrganizationData, getOrganizationById as getOrganizationByIdRepo, getAllOrganizations as getAllOrganizationsRepo, getOrganizationByEmail, createOrganization as createOrganizationRepo, updateOrganization as updatedOrganizationRepo} from '../repositories/organizations.repository.js'
+import { getOrganizationData,
+     getOrganizationById as getOrganizationByIdRepo,
+     getAllOrganizations as getAllOrganizationsRepo,
+     getOrganizationByEmail, 
+     createOrganization as createOrganizationRepo, 
+     updateOrganization as updatedOrganizationRepo,
+     deleteOrganization as deleteOrganizationRepo
+    } from '../repositories/organizations.repository.js';
+
 import { getAllEventsByOrganizationId as getEventsByOrganizationId } from '../repositories/events.repository.js';
 import ConflictError from '../errors/ConflictError.js';
 
@@ -67,3 +75,9 @@ export async function updateOrganization(id, fields) {
 
     return updatedOrganization.toPublic();
 }
+
+export async function deleteOrganization(id) {
+
+    await deleteOrganizationRepo(id);
+}
+

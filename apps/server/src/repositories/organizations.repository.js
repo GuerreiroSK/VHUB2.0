@@ -147,3 +147,17 @@ export async function updateOrganization(id, fields) {
         row.location
     );
 }
+
+export async function deleteOrganization(id) {
+
+    const result = await db_pool.query(
+        'UPDATE organizations SET deleted_at = NOW() WHERE id =$1',
+        [id]
+    );
+
+    const row = result.rowCount;
+
+    if(row === 0) {
+        throw new NotFoundError ('Organization not found');
+    }
+}

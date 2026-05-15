@@ -1,4 +1,12 @@
-import { getOrganizationTestMessage, getAllEventsByOrganizationId as getEventsByOrgId, getAllOrganizations as getAllOrganizationsService, getOrganizationById as getOrganizationByIdService, createOrganization as createOrganizationService, updateOrganization as updateOrganizationService } from '../services/organizations.service.js'
+import { getOrganizationTestMessage, 
+    getAllEventsByOrganizationId as getEventsByOrgId, 
+    getAllOrganizations as getAllOrganizationsService, 
+    getOrganizationById as getOrganizationByIdService, 
+    createOrganization as createOrganizationService, 
+    updateOrganization as updateOrganizationService,
+    deleteOrganization as deleteOrganizationService, 
+} from '../services/organizations.service.js';
+
 import NotFoundError from '../errors/NotFoundError.js';
 import ConflictError from '../errors/ConflictError.js';
 
@@ -160,6 +168,34 @@ export async function updateOrganization(req, res) {
         } else {
 
             return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+}
+
+export async function deleteOrganization(req, res) {
+
+    const organizationId = Number(req.params.id)
+
+    if (!Number.isInteger(organizationId) || organizationId <= 0 ) {
+
+        return res.status(400).json({message: 'id must be a positive integer'})
+    }
+
+    try {
+
+        await deleteOrganizationService(organizationId);
+
+        return res.status(204).send();
+
+    } catch (err) {
+
+        if (err instanceof NotFoundError) {
+
+            return res.status(404).json({message: 'Organization not found'});
+
+        } else {
+
+            return res.status(500).json({message: 'Internal server error'});
         }
     }
 }
