@@ -28,7 +28,7 @@ export async function getEventData() {
 export async function getEventById(id) {
 
     const result = await db_pool.query(
-        'SELECT id, name, location, organization_id, email FROM events WHERE id = $1',
+        'SELECT id, name, location, organization_id, email FROM events WHERE id = $1 AND deleted_at IS NULL',
         [id]
     )
 
@@ -55,12 +55,12 @@ export async function getAllEvents(limit, offset) {
 
     if (limit === undefined || offset === undefined) {
         result = await db_pool.query(
-            'SELECT id, name, location, organization_id, email FROM events ORDER BY id'
+            'SELECT id, name, location, organization_id, email FROM events WHERE deleted_at IS NULL ORDER BY id'
         );
     } else {
 
         result = await db_pool.query(
-            'SELECT id, name, location, organization_id, email FROM events ORDER BY id LIMIT $1 OFFSET $2',
+            'SELECT id, name, location, organization_id, email FROM events WHERE deleted_at IS NULL ORDER BY id LIMIT $1 OFFSET $2',
             [limit, offset]
         )
     }
@@ -92,7 +92,7 @@ export async function getAllEvents(limit, offset) {
 export async function getAllEventsByOrganizationId(id) {
 
     const result = await db_pool.query(
-        'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1',
+        'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1 AND deleted_at IS NULL',
         [id]
     );
 
@@ -114,14 +114,14 @@ export async function getEventsByOrganizationId(organizationId, limit, offset) {
     if (limit === undefined || offset === undefined) {
 
         result = await db_pool.query(
-            'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1 ORDER BY id',
+            'SELECT id, name, location, organization_id, email FROM events WHERE deleted_at IS NULL AND organization_id = $1 ORDER BY id',
             [organizationId]
         );
 
     } else {
 
         result = await db_pool.query(
-            'SELECT id, name, location, organization_id, email FROM events WHERE organization_id = $1 ORDER BY id LIMIT $2 OFFSET $3',
+            'SELECT id, name, location, organization_id, email FROM events WHERE deleted_at IS NULL AND organization_id = $1 ORDER BY id LIMIT $2 OFFSET $3',
             [organizationId, limit, offset]
         );
     }
