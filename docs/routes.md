@@ -640,3 +640,69 @@ This document lists the backend API endpoints currently implemented in the proje
   - Events must belong to an organization — organizationId is required
   - Service checks organization exists before creating the event
   - organizationId will be derived from auth session in future auth implementation
+
+  ---
+
+  ### PATCH /api/events/:id
+
+- Purpose:
+  Partially update an existing event by its id
+
+- Method: PATCH
+
+- URL:
+  /api/events/:id
+
+- Route Params:
+  - id (positive integer)
+
+- Body (JSON — all fields optional, at least one required):
+  {
+    "name": "Updated Event Name",
+    "location": "Porto",
+    "email": "updated@event.com",
+    "start_datetime": "2026-06-01T10:00:00",
+    "end_datetime": "2026-06-01T14:00:00"
+  }
+
+- Behavior:
+  - If `id` is invalid (not a positive integer) → 400 Bad Request
+  - If body is empty (no fields provided) → 400 Bad Request
+  - If event does not exist → 404 Not Found
+  - If successful → 200 OK with updated event
+
+- Example Requests:
+  - PATCH /api/events/1 with { "name": "New Name" }
+  - PATCH /api/events/1 with {}
+  - PATCH /api/events/9999 with { "name": "New Name" }
+
+- Response:
+  - 200 OK
+    {
+      "id": 1,
+      "eventName": "New Name",
+      "location": "Carcavelos",
+      "organizationId": 2,
+      "email": "event@help.com",
+      "startDateTime": null,
+      "endDateTime": null
+    }
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 400 Bad Request
+    { "message": "No fields were updated" }
+
+  - 404 Not Found
+    { "message": "Event not found." }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error." }
+
+- Notes:
+  - organizationId is not updatable — events cannot change organization ownership
+  - start_datetime and end_datetime are sent as ISO 8601 strings
+  - PATCH used for partial updates — send only fields to change
+
+  ---
