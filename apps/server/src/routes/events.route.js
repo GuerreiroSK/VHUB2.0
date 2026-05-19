@@ -1,5 +1,6 @@
-import express from 'express'
-import { eventsWithOrganizations, getEvents, eventTest, getEventById } from '../controllers/events.controller.js'
+import express from 'express';
+
+import { eventsWithOrganizations, getEvents, eventTest, getEventById, createEvent } from '../controllers/events.controller.js';
 
 const testEventsRouter = express.Router();
 
@@ -9,6 +10,8 @@ testEventsRouter.get('/with-organizations', eventsWithOrganizations);
 
 testEventsRouter.get('/', getEvents);
 
-testEventsRouter.get('/:id', getEventById)
+testEventsRouter.get('/:id', getEventById);
+
+testEventsRouter.post('/', createEvent );
 
 export default testEventsRouter;

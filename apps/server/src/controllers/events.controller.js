@@ -1,6 +1,11 @@
-import NotFoundError from '../errors/NotFoundError.js';
-import { getEventTestMessage, getEventsWithOrganizations, getEventById as getEventByIdService, listEventsPaginated } from '../services/events.service.js'
+import { getEventTestMessage,
+     getEventsWithOrganizations, 
+     getEventById as getEventByIdService,
+     createEvent as createEventService,
+     listEventsPaginated
+    } from '../services/events.service.js';
 
+import NotFoundError from '../errors/NotFoundError.js';
 export async function eventTest (req, res) {
 
     const event = await getEventTestMessage();
@@ -94,6 +99,34 @@ export async function getEvents(req, res) {
 
             return res.status(500).json({ message: 'Internal server error.' });
 
+        }
+    }
+}
+
+export async function createEvent(req, res) {
+
+    const { eventName, location, email, organizationId } = req.body;
+
+    if (!eventName || !location || !email || !organizationId) {
+
+        return res.status(400).json({ message: 'Name, Email, Location and Organization ID fields cannot be empty' });
+    }
+
+    try {
+
+        const createdEvent = await createEventService(eventName, location, email, organizationId);
+
+        return res.status(201).json(createdEvent);
+
+    } catch (err) {
+
+        if (err instanceof NotFoundError) {
+
+            return res.status(404).json({ message: err.message });
+
+        } else {
+
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 }

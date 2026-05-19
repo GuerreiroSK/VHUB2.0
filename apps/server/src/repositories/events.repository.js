@@ -136,3 +136,23 @@ export async function getEventsByOrganizationId(organizationId, limit, offset) {
 
     return eventsMap;
 }
+
+export async function createEvent(eventName, location, email, organizationId) {
+
+    const result = await db_pool.query(
+        'INSERT INTO events (name, location, email, organization_id) VALUES ($1 , $2, $3, $4) RETURNING id, name, location, email, organization_id',
+        [eventName, location, email, organizationId]
+    );
+
+    const row = result.rows[0];
+
+    const newEvent = new Event(
+        row.id,
+        row.name,
+        row.location,
+        row.organization_id,
+        row.email
+    );
+
+    return newEvent;
+}
