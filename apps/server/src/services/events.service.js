@@ -2,7 +2,8 @@ import { getEventData,
     getAllEvents, 
     getEventsByOrganizationId, 
     getEventById as getEventByIdRepo,
-    createEvent as createEventRepo, 
+    createEvent as createEventRepo,
+    updateEvent as updateEventRepo, 
 } from '../repositories/events.repository.js';
 
 import { getOrganizationById, getAllOrganizations} from '../repositories/organizations.repository.js';
@@ -96,11 +97,18 @@ export async function listEventsPaginated({page, limit, organizationId}) {
     }
 }
 
-export async function createEvent(eventName, location, email, organizationId) {
+export async function createEvent(eventName, location, email, organizationId, startDateTime, endDateTime) {
 
     await getOrganizationById(organizationId);
 
-    const newEvent = await createEventRepo(eventName, location, email, organizationId);
+    const newEvent = await createEventRepo(eventName, location, email, organizationId, startDateTime, endDateTime);
 
     return newEvent.toPublic();
+}
+
+export async function updateEvent(id, fields) {
+
+    const updatedEvent = await updateEventRepo(id, fields);
+
+    return updatedEvent.toPublic();
 }

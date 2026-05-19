@@ -2,6 +2,7 @@ import { getEventTestMessage,
      getEventsWithOrganizations, 
      getEventById as getEventByIdService,
      createEvent as createEventService,
+     updateEvent as updateEventService,
      listEventsPaginated
     } from '../services/events.service.js';
 
@@ -105,7 +106,7 @@ export async function getEvents(req, res) {
 
 export async function createEvent(req, res) {
 
-    const { eventName, location, email, organizationId } = req.body;
+    const { eventName, location, email, organizationId, startDateTime, endDateTime } = req.body;
 
     if (!eventName || !location || !email || !organizationId) {
 
@@ -114,7 +115,7 @@ export async function createEvent(req, res) {
 
     try {
 
-        const createdEvent = await createEventService(eventName, location, email, organizationId);
+        const createdEvent = await createEventService(eventName, location, email, organizationId, startDateTime, endDateTime);
 
         return res.status(201).json(createdEvent);
 
@@ -123,6 +124,47 @@ export async function createEvent(req, res) {
         if (err instanceof NotFoundError) {
 
             return res.status(404).json({ message: err.message });
+
+        } else {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+}
+
+export async function updateEvent(req, res) {
+
+    const eventId = Number(req.params.id);
+
+    const { name, location, email, start_datetime, end_datetime} = req.body;
+
+    const fields = {};
+
+    if (name !== undefined) fields.name = name;
+    if (email !== undefined) fields.email = email;
+    if (location !== undefined) fields.location = location;
+    if (start_datetime !== undefined) fields.start_datetime = start_datetime;
+    if (end_datetime !== undefined) fields.end_datetime = end_datetime;
+
+    if (!Number.isInteger(eventId) || eventId <= 0) {
+
+        return res.status(400).json({ message: 'id must be a positive integer' });
+
+    } else if (Object.keys(fields).length === 0) {
+
+        return res.status(400).json({ message: 'No fields were updated' });
+    }
+
+    try {
+
+        const updatedEvent = await updateEventService(eventId, fields);
+
+        return res.status(200).json(updatedEvent);
+
+    } catch (err) {
+
+        if (err instanceof NotFoundError) {
+
+            return res.status(404).json({ message: 'Event not found' });
 
         } else {
 
