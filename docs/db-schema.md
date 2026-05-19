@@ -19,8 +19,7 @@ Out of scope:
 - Column names are **snake_case**
 - Primary keys use `id` (auto-generated)
 - Emails are stored as strings; application code is responsible for normalizing them (lowercasing) before insert/update
-- Schema changes follow “**use cases, not imagination**”:
-  - we avoid speculative fields like `deleted_at` until needed
+- Schema changes are tracked in `docs/migrations/` and applied manually via DBeaver
 
 ---
 
@@ -34,8 +33,8 @@ Columns:
 - `id` (PK)
 - `name` (NOT NULL)
 - `email` (NOT NULL, UNIQUE)
-- `password` (NOT NULL)  
-  - stored as a string; hashing is handled by the application layer (later, during auth)
+- `password` (NOT NULL)
+  - stored as a string; hashing handled by application layer during auth
 - `created_at` (NOT NULL, default `now()`)
 
 Constraints:
@@ -55,6 +54,7 @@ Columns:
 - `description` (NULLABLE)
 - `location` (NULLABLE)
 - `created_at` (NOT NULL, default `now()`)
+- `deleted_at` (NULLABLE) — soft delete timestamp; NULL means active
 
 Constraints:
 - Primary key: `organizations.id`
@@ -72,12 +72,15 @@ Columns:
 - `location` (NOT NULL)
 - `email` (NOT NULL)
 - `organization_id` (NOT NULL, FK)
+- `start_datetime` (NULLABLE) — event start date and time
+- `end_datetime` (NULLABLE) — event end date and time
 - `created_at` (NOT NULL, default `now()`)
+- `deleted_at` (NULLABLE) — soft delete timestamp; NULL means active
 
 Constraints:
 - Primary key: `events.id`
 - Foreign key: `events.organization_id → organizations.id`
-  - On delete: `RESTRICT` (prevents deleting an organization that still has events)
+  - On delete: `RESTRICT`
   - On update: `CASCADE`
 
 ---
@@ -94,14 +97,23 @@ Enforced by:
 
 ---
 
+## Schema Change History
+
+| Change | Table | Description |
+|--------|-------|-------------|
+| Added `deleted_at` | `organizations` | Soft delete support |
+| Added `deleted_at` | `events` | Soft delete support |
+| Added `start_datetime` | `events` | Event scheduling |
+| Added `end_datetime` | `events` | Event scheduling |
+| Fixed FK constraint | `events` | `events_organizations_fk` was referencing `events.id` instead of `events.organization_id` |
+
+---
+
 ## Notes on Future Schema Growth
 
-The following concepts are intentionally not implemented yet and will be introduced only when supported by a use case:
+The following concepts are intentionally not implemented yet:
 
-- Soft deletes (`deleted_at`)
 - Attendance / interest (likely a join table, e.g. `event_attendees`)
 - Roles / permissions (admins, org members, etc.)
 - Status fields (published/canceled/etc.)
-- Capacity and scheduling details beyond the current Event model
-
-When these are introduced, this document will be updated as part of the same PR that changes the schema.
+- Capacity limits

@@ -448,3 +448,38 @@ Use soft delete for organizations — set `deleted_at` timestamp instead of remo
 - All GET queries updated to filter out soft deleted organizations
 - Repository uses `rowCount` to detect if the organization existed before deleting
 - 204 No Content returned on successful delete — no body needed
+
+---
+
+## Schema Migration Strategy
+
+**Decision**
+Track all schema changes in `docs/migrations/` as plain SQL files.
+Apply them manually via DBeaver during development.
+
+**Why**
+- Schema changes need to be documented and reproducible
+- Without tracking, it's impossible to know the current state of the database
+- Prepares for a proper migration tool (e.g. Flyway, node-pg-migrate) in the future
+
+**Result**
+- `docs/migrations/` folder created
+- Each migration is a numbered SQL file (e.g. `001_add_soft_delete.sql`)
+- Schema change history tracked in `db-schema.md`
+
+---
+
+## Foreign Key Constraint Fix (events_organizations_fk)
+
+**Decision**
+Drop and recreate the `events_organizations_fk` constraint.
+
+**Why**
+- The original constraint referenced `events.id` instead of `events.organization_id`
+- This caused PostgreSQL to use the auto-incremented event id as the organization lookup key
+- Every INSERT into events failed with a foreign key violation
+
+**Result**
+- Constraint dropped and recreated correctly:
+  `FOREIGN KEY (organization_id) REFERENCES organizations(id)`
+- Events can now be created and linked to organizations correctly
