@@ -1,5 +1,13 @@
-import { getEventData, getAllEvents, getEventsByOrganizationId, getEventById as getEventByIdRepo } from '../repositories/events.repository.js'
+import { getEventData, 
+    getAllEvents, 
+    getEventsByOrganizationId, 
+    getEventById as getEventByIdRepo,
+    createEvent as createEventRepo, 
+} from '../repositories/events.repository.js';
+
 import { getOrganizationById, getAllOrganizations} from '../repositories/organizations.repository.js';
+
+import NotFoundError from '../errors/NotFoundError.js';
 
 export async function getEventTestMessage() {
 
@@ -86,4 +94,13 @@ export async function listEventsPaginated({page, limit, organizationId}) {
 
         return events.map(e => e.toPublic());
     }
+}
+
+export async function createEvent(eventName, location, email, organizationId) {
+
+    await getOrganizationById(organizationId);
+
+    const newEvent = await createEventRepo(eventName, location, email, organizationId);
+
+    return newEvent.toPublic();
 }
