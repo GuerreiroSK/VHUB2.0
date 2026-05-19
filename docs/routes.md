@@ -585,3 +585,58 @@ This document lists the backend API endpoints currently implemented in the proje
   - Data is composed in the service layer
   - Combines Event and Organization entities
   - Returns empty array if no events exist
+
+  ---
+
+  ### POST /api/events
+
+- Purpose:
+  Create a new event linked to an organization
+
+- Method: POST
+
+- URL:
+  /api/events
+
+- Body (JSON):
+  {
+    "eventName": "Beach Cleanup",
+    "location": "Carcavelos",
+    "email": "event@help.com",
+    "organizationId": 1
+  }
+
+- Required Fields:
+  - eventName
+  - location
+  - email
+  - organizationId
+
+- Behavior:
+  - If any required field is missing → 400 Bad Request
+  - If organization does not exist → 404 Not Found
+  - If successful → 201 Created with new event
+
+- Response:
+  - 201 Created
+    {
+      "id": 2,
+      "eventName": "Beach Cleanup",
+      "location": "Carcavelos",
+      "organizationId": 1,
+      "email": "event@help.com"
+    }
+
+  - 400 Bad Request
+    { "message": "Name, Email, Location and Organization ID fields cannot be empty" }
+
+  - 404 Not Found
+    { "message": "Organization not found." }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error." }
+
+- Notes:
+  - Events must belong to an organization — organizationId is required
+  - Service checks organization exists before creating the event
+  - organizationId will be derived from auth session in future auth implementation
