@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { eventsWithOrganizations, getEvents, eventTest, getEventById, createEvent, updateEvent } from '../controllers/events.controller.js';
+import { eventsWithOrganizations, getEvents, eventTest, getEventById, createEvent, updateEvent, deleteEvent } from '../controllers/events.controller.js';
 
 const testEventsRouter = express.Router();
 
@@ -15,5 +15,7 @@ testEventsRouter.get('/:id', getEventById);
 testEventsRouter.post('/', createEvent );
 
 testEventsRouter.patch('/:id', updateEvent);
+
+testEventsRouter.delete('/:id', deleteEvent);
 
 export default testEventsRouter;
