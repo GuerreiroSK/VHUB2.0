@@ -3,6 +3,7 @@ import { getEventTestMessage,
      getEventById as getEventByIdService,
      createEvent as createEventService,
      updateEvent as updateEventService,
+     deleteEvent as deleteEventService,
      listEventsPaginated
     } from '../services/events.service.js';
 
@@ -170,5 +171,32 @@ export async function updateEvent(req, res) {
 
             return res.status(500).json({ message: 'Internal server error' });
         }
+    }
+}
+
+export async function deleteEvent(req, res) {
+
+    const eventId = Number(req.params.id);
+
+    if (!Number.isInteger(eventId) || eventId <= 0 ) {
+        
+        return res.status(400).json({ message: 'id must be a positive integer'});
+    }
+
+    try {
+
+        await deleteEventService(eventId);
+        
+        return res.status(204).send();
+
+    } catch (err) {
+
+        if (err instanceof NotFoundError) {
+
+            return res.status(404).json({ message: err.message});
+
+        } 
+
+        return res.status(500).json({ message: 'Internal server error'});
     }
 }

@@ -3,7 +3,8 @@ import { getEventData,
     getEventsByOrganizationId, 
     getEventById as getEventByIdRepo,
     createEvent as createEventRepo,
-    updateEvent as updateEventRepo, 
+    updateEvent as updateEventRepo,
+    deleteEvent as deleteEventRepo, 
 } from '../repositories/events.repository.js';
 
 import { getOrganizationById, getAllOrganizations} from '../repositories/organizations.repository.js';
@@ -111,4 +112,9 @@ export async function updateEvent(id, fields) {
     const updatedEvent = await updateEventRepo(id, fields);
 
     return updatedEvent.toPublic();
+}
+
+export async function deleteEvent(id) {
+
+    await deleteEventRepo(id);
 }

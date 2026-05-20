@@ -203,3 +203,15 @@ export async function updateEvent(id, fields) {
         row.end_datetime
     );
 }
+
+export async function deleteEvent(id) {
+
+    const result = await db_pool.query(
+        'UPDATE events SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL',
+        [id]
+    );
+
+    if (result.rowCount === 0) {
+        throw new NotFoundError('Event not found');
+    }
+}
