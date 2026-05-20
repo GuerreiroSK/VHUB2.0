@@ -706,3 +706,45 @@ This document lists the backend API endpoints currently implemented in the proje
   - PATCH used for partial updates — send only fields to change
 
   ---
+
+### DELETE /api/events/:id
+
+- Purpose:
+  Soft delete an event by its id
+
+- Method: DELETE
+
+- URL:
+  /api/events/:id
+
+- Route Params:
+  - id (positive integer)
+
+- Behavior:
+  - If `id` is invalid (not a positive integer) → 400 Bad Request
+  - If event does not exist or is already deleted → 404 Not Found
+  - If successful → 204 No Content
+
+- Example Requests:
+  - DELETE /api/events/1
+  - DELETE /api/events/abc
+  - DELETE /api/events/9999
+
+- Response:
+  - 204 No Content (no body)
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "Event not found" }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error." }
+
+- Notes:
+  - Soft delete — sets deleted_at timestamp, data is preserved
+  - Deleted events are excluded from all GET queries
+  - Hard delete not used — data retained for analytics and recovery
+
+  ---
