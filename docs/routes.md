@@ -15,30 +15,6 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ## Users
 
-### GET /api/users/test
-
-- Purpose:
-  Verify the users vertical slice (route → controller → service → repository → database)
-
-- Method: GET
-
-- URL:
-  /api/users/test
-
-- Response:
-  {
-    "id": 1,
-    "name": "João",
-    "email": "joao@email.com"
-  }
-
-- Notes:
-  - Data is fetched from PostgreSQL
-  - Sensitive fields (e.g. password) are not exposed
-  - Response is produced via the User.toPublic() entity method
-
----
-
 ### GET /api/users
 
 - Purpose:
@@ -265,25 +241,6 @@ This document lists the backend API endpoints currently implemented in the proje
 ---
 
 ## Organizations
-
-### GET /api/organizations/organization_test
-
-- Purpose:
-  Verify the organizations vertical slice (route → controller → service → repository → database)
-
-- Method: GET
-
-- URL:
-  /api/organizations/organization_test
-
-- Response:
-  { "message": "Organization route working" }
-
-- Notes:
-  - Data is fetched from PostgreSQL
-  - Response is constructed via Organization entity
-
----
 
 ### GET /api/organizations
 
@@ -586,25 +543,6 @@ This document lists the backend API endpoints currently implemented in the proje
 ---
 
 ## Events
-
-### GET /api/events/event_test
-
-- Purpose:
-  Verify the events vertical slice (route → controller → service → repository → database)
-
-- Method: GET
-
-- URL:
-  /api/events/event_test
-
-- Response:
-  { "message": "Event route working" }
-
-- Notes:
-  - Data is fetched from PostgreSQL
-  - Response is constructed via Event entity
-
----
 
 ### GET /api/events
 
