@@ -53,7 +53,7 @@ export async function getAllOrganizations() {
 export async function getOrganizationByEmail(email) {
 
     const result = await db_pool.query(
-        'SELECT id, email FROM organizations WHERE email = $1 AND deleted_at IS NULL',
+        'SELECT id, email FROM organizations WHERE email = $1',
         [email]
     );
 
