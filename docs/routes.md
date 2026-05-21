@@ -393,6 +393,52 @@ This document lists the backend API endpoints currently implemented in the proje
   - Dynamic SQL built in repository using Object.entries()
 
 ---
+### POST /api/users
+
+- Purpose:
+  Create a new user
+
+- Method: POST
+
+- URL:
+  /api/users
+
+- Body:
+  {
+    "name": "João Pedro",
+    "email": "joao@mail.com",
+    "password": "test123"
+  }
+
+- Required Fields:
+  - name
+  - email
+  - password
+
+- Behavior:
+  - If name, email or password are missing → 400 Bad Request
+  - If email already exists → 409 Conflict
+  - If valid → 201 Created with user object
+
+- Example Requests:
+  - POST /api/users
+
+- Response:
+  - 201 Created
+    { "id": 1, "name": "João", "email": "joao@email.com" }
+
+  - 400 Bad Request
+    { "message": "Name, Email and Password fields cannot be empty" }
+
+  - 409 Conflict
+    { "message": "This email already exists/registered" }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error" }
+
+- Notes:
+  - Password is stored as plain text for now — bcrypt hashing deferred to Phase 3 (auth)
+  - Password is never returned in the response
 
 ### DELETE /api/organizations/:id
 
