@@ -75,3 +75,38 @@ export async function getUserById(id) {
 
     return user;
 }
+
+export async function getUserByEmail(email) {
+    
+    const result = await db_pool.query(
+        'SELECT email FROM users WHERE email = $1', 
+        [email]
+    );
+
+    const row = result.rows[0];
+
+    if (!row) {
+
+        return null
+    }
+    
+    return row;
+}
+
+export async function createUser(name, email, password) {
+
+    const result = await db_pool.query(
+        'INSERT INTO users (name, email, password) VALUES ( $1, $2, $3) RETURNING id, name, email', 
+    [name, email, password]);
+
+    const row = result.rows[0];
+
+    const newUser = new User(
+        row.id,
+        row.name,
+        row.email,
+        row.password
+    );
+
+    return newUser;
+}
