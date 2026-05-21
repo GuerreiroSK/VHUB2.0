@@ -143,3 +143,18 @@ export async function updateUser(id, fields) {
         row.password
     );
 }
+
+export async function deleteUser(id) {
+
+    const result = await db_pool.query(
+        'UPDATE users SET deleted_at = NOW() WHERE id =$1 AND deleted_at IS NULL',
+        [id]
+    );
+
+    const row = result.rowCount;
+
+    if (row === 0) {
+
+        throw new NotFoundError('User not found');
+    }
+}

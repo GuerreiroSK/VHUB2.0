@@ -2,7 +2,8 @@ import { getUserTestMessage,
     getAllUsers as getAllUsersService, 
     getUserById as getUserByIdService, 
     createUser as createUserService,
-    updateUser as updateUserService
+    updateUser as updateUserService,
+    deleteUser as deleteUserService
 } from "../services/users.service.js";
 import NotFoundError from "../errors/NotFoundError.js";
 import ConflictError from "../errors/ConflictError.js";
@@ -137,5 +138,32 @@ export async function updateUser(req, res) {
             
         }
         return res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export async function deleteUser(req, res) {
+
+    const userId = Number(req.params.id)
+
+    if (!Number.isInteger(userId) || userId <= 0 ) {
+
+        return res.status(400).json({message: 'id must be a positive integer'})
+    }
+
+    try {
+
+        await deleteUserService(userId);
+
+        return res.status(204).send();
+
+    } catch (err) {
+
+        if (err instanceof NotFoundError) {
+
+            return res.status(404).json({message: 'User not found'});
+
+        }
+        
+        return res.status(500).json({message: 'Internal server error'});
     }
 }

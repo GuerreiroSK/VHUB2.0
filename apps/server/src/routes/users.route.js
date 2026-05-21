@@ -1,5 +1,5 @@
 import express from 'express';
-import { userTest, getAllUsers, getUserById, createUser, updateUser} from '../controllers/users.controller.js';
+import { userTest, getAllUsers, getUserById, createUser, updateUser, deleteUser} from '../controllers/users.controller.js';
 
 const testUsersRouter = express.Router();
 
@@ -12,5 +12,7 @@ testUsersRouter.get('/:id', getUserById);
 testUsersRouter.post('/', createUser);
 
 testUsersRouter.patch('/:id', updateUser);
+
+testUsersRouter.delete('/:id', deleteUser);
 
 export default testUsersRouter;

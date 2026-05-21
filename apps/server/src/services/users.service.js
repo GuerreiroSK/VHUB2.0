@@ -1,12 +1,13 @@
 import ConflictError from "../errors/ConflictError.js";
-import NotFoundError from "../errors/NotFoundError.js";
+
 import {
     getUserData,
     getUserByEmail,
     getAllUsers as getAllUsersRepo,
     getUserById as getUserByIdRepo,
     createUser as createUserRepo,
-    updateUser as updateUserRepo
+    updateUser as updateUserRepo,
+    deleteUser as deleteUserRepo
 } from "../repositories/users.repository.js";
 
 export async function getUserTestMessage() {
@@ -62,4 +63,9 @@ export async function updateUser(id, fields) {
     const updatedUser = await updateUserRepo(id, fields);
 
     return updatedUser.toPublic();
+}
+
+export async function deleteUser(id) {
+
+    await deleteUserRepo(id);
 }

@@ -224,6 +224,46 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ---
 
+### DELETE /api/users/:id
+
+- Purpose:
+  Soft delete an existing user
+
+- Method: DELETE
+
+- URL:
+  /api/users/:id
+
+- Route Params:
+  - id (positive integer)
+
+- Behavior:
+  - If id is not a positive integer → 400 Bad Request
+  - If user not found or already deleted → 404 Not Found
+  - If valid → 204 No Content
+
+- Example Requests:
+  - DELETE /api/users/1
+  - DELETE /api/users/abc
+
+- Response:
+  - 204 No Content
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "User not found" }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error" }
+
+- Notes:
+  - Soft delete — sets deleted_at to NOW(), does not remove the row
+  - Requires migration 003_add_soft_delete_to_users.sql to be applied first
+
+---
+
 ## Organizations
 
 ### GET /api/organizations/organization_test
