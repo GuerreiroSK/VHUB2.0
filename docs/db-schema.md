@@ -86,6 +86,23 @@ Constraints:
 
 ---
 
+### `event_attendees`
+
+Represents the relationship between users and events — tracks which users are registered for which events.
+
+Columns:
+- `user_id` (NOT NULL, FK) — references the attending user
+- `event_id` (NOT NULL, FK) — references the event being attended
+- `created_at` (NOT NULL, default `now()`) — when the user registered
+- `deleted_at` (NULLABLE) — soft delete timestamp; NULL means active registration
+
+Constraints:
+- Primary key: composite (`user_id`, `event_id`)
+- Foreign key: `event_attendees.user_id → users.id` (ON DELETE CASCADE)
+- Foreign key: `event_attendees.event_id → events.id` (ON DELETE CASCADE)
+
+---
+
 ## Relationships
 
 ### Organizations → Events (1:N)
@@ -98,10 +115,20 @@ Enforced by:
 
 ---
 
+### Users → Events (M:N via event_attendees)
+
+- One user can attend many events
+- One event can have many attendees
+- Relationship tracked via `event_attendees` join table
+- Soft delete on `event_attendees` represents registration cancellation
+
+---
+
 ## Schema Change History
 
 | Change | Table | Description |
 |--------|-------|-------------|
+| Added `event_attendees` | — | Join table for user-event attendance with soft delete |
 | Added `deleted_at` | `users` | Soft delete support |
 | Added `deleted_at` | `organizations` | Soft delete support |
 | Added `deleted_at` | `events` | Soft delete support |
@@ -115,7 +142,6 @@ Enforced by:
 
 The following concepts are intentionally not implemented yet:
 
-- Attendance / interest (likely a join table, e.g. `event_attendees`)
 - Roles / permissions (admins, org members, etc.)
 - Status fields (published/canceled/etc.)
 - Capacity limits
