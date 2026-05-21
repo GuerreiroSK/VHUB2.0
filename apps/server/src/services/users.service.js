@@ -48,7 +48,7 @@ export async function createUser(name, email, password) {
 
 export async function updateUser(id, fields) {
 
-    await getUserById(id);
+    await getUserByIdRepo(id);
 
     if (fields.email) {
 

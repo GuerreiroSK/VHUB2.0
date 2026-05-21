@@ -7,7 +7,7 @@ import { getEventData,
     deleteEvent as deleteEventRepo, 
 } from '../repositories/events.repository.js';
 
-import { getOrganizationById, getAllOrganizations} from '../repositories/organizations.repository.js';
+import { getOrganizationById as getOrganizationByIdRepo, getAllOrganizations} from '../repositories/organizations.repository.js';
 
 import NotFoundError from '../errors/NotFoundError.js';
 
@@ -23,24 +23,6 @@ export async function getEventById(id) {
     const event = await getEventByIdRepo(id);
 
     return event.toPublic();
-}
-
-export async function listEvents(organizationId) {
-
-    if (organizationId == null) {
-
-        const events = await getAllEvents();
-
-        return events.map(e => e.toPublic());
-        
-    } else {
-
-        await getOrganizationById(organizationId);
-
-        const events = await getEventsByOrganizationId(organizationId);
-
-        return events.map(e => e.toPublic());    
-    }
 }
 
 export async function getEventsWithOrganizations() {
@@ -90,7 +72,7 @@ export async function listEventsPaginated({page, limit, organizationId}) {
 
     } else {
 
-        await getOrganizationById(organizationId);
+        await getOrganizationByIdRepo(organizationId);
 
         const events = await getEventsByOrganizationId(organizationId, limit, offset);
 
@@ -100,7 +82,7 @@ export async function listEventsPaginated({page, limit, organizationId}) {
 
 export async function createEvent(eventName, location, email, organizationId, startDateTime, endDateTime) {
 
-    await getOrganizationById(organizationId);
+    await getOrganizationByIdRepo(organizationId);
 
     const newEvent = await createEventRepo(eventName, location, email, organizationId, startDateTime, endDateTime);
 
@@ -108,6 +90,8 @@ export async function createEvent(eventName, location, email, organizationId, st
 }
 
 export async function updateEvent(id, fields) {
+
+    await getEventByIdRepo(id);
 
     const updatedEvent = await updateEventRepo(id, fields);
 

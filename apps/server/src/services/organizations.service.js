@@ -1,11 +1,12 @@
-import { getOrganizationData,
-     getOrganizationById as getOrganizationByIdRepo,
-     getAllOrganizations as getAllOrganizationsRepo,
-     getOrganizationByEmail, 
-     createOrganization as createOrganizationRepo, 
-     updateOrganization as updatedOrganizationRepo,
-     deleteOrganization as deleteOrganizationRepo
-    } from '../repositories/organizations.repository.js';
+import {
+    getOrganizationData,
+    getOrganizationById as getOrganizationByIdRepo,
+    getAllOrganizations as getAllOrganizationsRepo,
+    getOrganizationByEmail,
+    createOrganization as createOrganizationRepo,
+    updateOrganization as updatedOrganizationRepo,
+    deleteOrganization as deleteOrganizationRepo
+} from '../repositories/organizations.repository.js';
 
 import { getAllEventsByOrganizationId as getEventsByOrganizationId } from '../repositories/events.repository.js';
 import ConflictError from '../errors/ConflictError.js';
@@ -20,7 +21,7 @@ export async function getOrganizationTestMessage() {
 
 export async function getAllEventsByOrganizationId(id) {
 
-    const organization = await getOrganizationById(id);
+    const organization = await getOrganizationByIdRepo(id);
 
     const allEventsByOrgId = await getEventsByOrganizationId(id);
 
@@ -46,25 +47,26 @@ export async function createOrganization(name, email, description, location) {
 
     const checkEmail = await getOrganizationByEmail(email);
 
-    if (checkEmail === null) {
-
-        const createdOrganization = await createOrganizationRepo(name, email, description, location);
-
-        return createdOrganization.toPublic();
-        
-    } else {
+    if (checkEmail !== null) {
 
         throw new ConflictError('This email already exists/registered');
+
     }
+
+    const createdOrganization = await createOrganizationRepo(name, email, description, location);
+
+    return createdOrganization.toPublic();
 }
 
 export async function updateOrganization(id, fields) {
+
+    await getOrganizationByIdRepo(id);
 
     if (fields.email) {
 
         const checkEmail = await getOrganizationByEmail(fields.email);
 
-        if ( checkEmail !== null && id !== checkEmail.id) {
+        if (checkEmail !== null && id !== checkEmail.id) {
 
             throw new ConflictError('This email is already exists.')
         }
