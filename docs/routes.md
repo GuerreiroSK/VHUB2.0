@@ -164,6 +164,66 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ---
 
+### PATCH /api/users/:id
+
+- Purpose:
+  Partially update an existing user
+
+- Method: PATCH
+
+- URL:
+  /api/users/:id
+
+- Route Params:
+  - id (positive integer)
+
+- Body:
+  {
+    "name": "João",
+    "email": "joao@email.com",
+    "password": "123456"
+  }
+
+- Optional Fields (send only what needs to change):
+  - name
+  - email
+  - password
+
+- Behavior:
+  - If id is not a positive integer → 400 Bad Request
+  - If no valid fields in body → 400 Bad Request
+  - If email already belongs to another user → 409 Conflict
+  - If user not found → 404 Not Found
+  - If valid → 200 OK with updated user object
+
+- Example Requests:
+  - PATCH /api/users/1
+  - PATCH /api/users/abc
+
+- Response:
+  - 200 OK
+    { "id": 1, "name": "João", "email": "joao@email.com" }
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+    { "message": "No fields were updated" }
+
+  - 404 Not Found
+    { "message": "User not found." }
+
+  - 409 Conflict
+    { "message": "This email already exists." }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error" }
+
+- Notes:
+  - Empty strings are treated as no value — only truthy values are added to the update
+  - Password stored as plain text for now — hashing deferred to Phase 3
+  - Service checks user exists before email conflict check to ensure correct error priority
+
+---
+
 ## Organizations
 
 ### GET /api/organizations/organization_test
