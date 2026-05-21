@@ -1,10 +1,12 @@
 import ConflictError from "../errors/ConflictError.js";
+import NotFoundError from "../errors/NotFoundError.js";
 import {
     getUserData,
     getUserByEmail,
     getAllUsers as getAllUsersRepo,
     getUserById as getUserByIdRepo,
-    createUser as createUserRepo
+    createUser as createUserRepo,
+    updateUser as updateUserRepo
 } from "../repositories/users.repository.js";
 
 export async function getUserTestMessage() {
@@ -41,4 +43,23 @@ export async function createUser(name, email, password) {
     const createdUser = await createUserRepo(name, email, password);
 
     return createdUser.toPublic();
+}
+
+export async function updateUser(id, fields) {
+
+    await getUserById(id);
+
+    if (fields.email) {
+
+        const checkEmail = await getUserByEmail(fields.email);
+
+        if ( checkEmail !== null && id !== checkEmail.id) {
+
+            throw new ConflictError('This email is already exists.')
+        }
+    }
+
+    const updatedUser = await updateUserRepo(id, fields);
+
+    return updatedUser.toPublic();
 }

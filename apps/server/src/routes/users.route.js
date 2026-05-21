@@ -1,5 +1,5 @@
 import express from 'express';
-import { userTest, getAllUsers, getUserById, createUser} from '../controllers/users.controller.js';
+import { userTest, getAllUsers, getUserById, createUser, updateUser} from '../controllers/users.controller.js';
 
 const testUsersRouter = express.Router();
 
@@ -10,5 +10,7 @@ testUsersRouter.get('/', getAllUsers);
 testUsersRouter.get('/:id', getUserById);
 
 testUsersRouter.post('/', createUser);
+
+testUsersRouter.patch('/:id', updateUser);
 
 export default testUsersRouter;
