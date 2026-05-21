@@ -36,3 +36,25 @@ In update service functions, always verify the resource exists (via repository) 
 - `updateUser` and `updateOrganization` now call the repository existence check first
 - Non-existent resources always return 404 regardless of the request body
 - Consistent with how the rest of the codebase handles error priority
+
+---
+
+## Email Uniqueness Check Must Include Soft Deleted Records
+
+**Decision**
+Remove `AND deleted_at IS NULL` from `getOrganizationByEmail` — email uniqueness checks query all records regardless of soft delete status.
+
+**Why**
+- The database unique constraint on `email` applies to all rows, deleted or not
+- If the application layer doesn't catch the conflict first, PostgreSQL throws a raw constraint violation error
+- That error is not a `ConflictError` — it falls through to 500 instead of 409
+- A soft deleted org's email should be considered taken until explicitly released (future moderation flow)
+
+**Trade-off**
+- Soft deleted organizations "hold" their email permanently until hard deleted or a moderation/recovery flow is implemented
+- This is intentional — prevents email reuse without admin review
+
+**Result**
+- `getOrganizationByEmail` now queries without `deleted_at` filter
+- Service correctly throws `ConflictError` before the update reaches the DB
+- 409 is returned instead of 500 for duplicate email attempts against soft deleted records
