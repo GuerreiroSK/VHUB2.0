@@ -151,7 +151,7 @@ export async function updateOrganization(id, fields) {
 export async function deleteOrganization(id) {
 
     const result = await db_pool.query(
-        'UPDATE organizations SET deleted_at = NOW() WHERE id =$1',
+        'UPDATE organizations SET deleted_at = NOW() WHERE id =$1 AND deleted_at IS NULL',
         [id]
     );
 
