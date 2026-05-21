@@ -1,5 +1,4 @@
-import { getEventTestMessage,
-     getEventsWithOrganizations, 
+import { getEventsWithOrganizations, 
      getEventById as getEventByIdService,
      createEvent as createEventService,
      updateEvent as updateEventService,
@@ -8,12 +7,6 @@ import { getEventTestMessage,
     } from '../services/events.service.js';
 
 import NotFoundError from '../errors/NotFoundError.js';
-export async function eventTest (req, res) {
-
-    const event = await getEventTestMessage();
-
-    return res.json(event);
-}
 
 export async function getEventById (req, res) {
 
@@ -37,19 +30,23 @@ export async function getEventById (req, res) {
         if (err instanceof NotFoundError) {
 
             return res.status(404).json({ message: err.message });
-
-        } else {
-
-            return res.status(500).json({ message: 'Internal server error.' });
         }
+
+        return res.status(500).json({ message: 'Internal server error.' });
     }
 }
 
 export async function eventsWithOrganizations (req, res) {
 
-    const eventsWithOrgs = await getEventsWithOrganizations();
+    try {
+         const eventsWithOrgs = await getEventsWithOrganizations();
 
-    return res.json(eventsWithOrgs);
+        return res.json(eventsWithOrgs);
+
+    } catch (err) {
+
+        return res.status(500).json({message: 'Internal server error'});
+    }   
 }
 
 export async function getEvents(req, res) {
@@ -96,12 +93,9 @@ export async function getEvents(req, res) {
         if (err instanceof NotFoundError) {
 
             return res.status(404).json({ message: err.message });
-
-        } else {
-
-            return res.status(500).json({ message: 'Internal server error.' });
-
         }
+
+        return res.status(500).json({ message: 'Internal server error.' });
     }
 }
 
@@ -125,10 +119,9 @@ export async function createEvent(req, res) {
         if (err instanceof NotFoundError) {
 
             return res.status(404).json({ message: err.message });
-
-        } else {
-            return res.status(500).json({ message: 'Internal server error' });
         }
+
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
@@ -140,17 +133,18 @@ export async function updateEvent(req, res) {
 
     const fields = {};
 
-    if (name !== undefined) fields.name = name;
-    if (email !== undefined) fields.email = email;
-    if (location !== undefined) fields.location = location;
-    if (start_datetime !== undefined) fields.start_datetime = start_datetime;
-    if (end_datetime !== undefined) fields.end_datetime = end_datetime;
+    if (name) fields.name = name;
+    if (email) fields.email = email;
+    if (location) fields.location = location;
+    if (start_datetime) fields.start_datetime = start_datetime;
+    if (end_datetime) fields.end_datetime = end_datetime;
 
     if (!Number.isInteger(eventId) || eventId <= 0) {
 
         return res.status(400).json({ message: 'id must be a positive integer' });
+    }
 
-    } else if (Object.keys(fields).length === 0) {
+    if (Object.keys(fields).length === 0) {
 
         return res.status(400).json({ message: 'No fields were updated' });
     }
@@ -166,11 +160,9 @@ export async function updateEvent(req, res) {
         if (err instanceof NotFoundError) {
 
             return res.status(404).json({ message: 'Event not found' });
-
-        } else {
-
-            return res.status(500).json({ message: 'Internal server error' });
         }
+
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 

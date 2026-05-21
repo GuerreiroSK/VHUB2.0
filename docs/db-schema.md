@@ -36,6 +36,7 @@ Columns:
 - `password` (NOT NULL)
   - stored as a string; hashing handled by application layer during auth
 - `created_at` (NOT NULL, default `now()`)
+- `deleted_at` (NULLABLE) — soft delete timestamp; NULL means active
 
 Constraints:
 - Primary key: `users.id`
@@ -101,6 +102,7 @@ Enforced by:
 
 | Change | Table | Description |
 |--------|-------|-------------|
+| Added `deleted_at` | `users` | Soft delete support |
 | Added `deleted_at` | `organizations` | Soft delete support |
 | Added `deleted_at` | `events` | Soft delete support |
 | Added `start_datetime` | `events` | Event scheduling |

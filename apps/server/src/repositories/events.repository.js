@@ -2,31 +2,6 @@ import db_pool from '../db/index.js';
 import Event from '../entities/Event.js'
 import NotFoundError from '../errors/NotFoundError.js';
 
-export async function getEventData() {
-
-    const result = await db_pool.query(
-        'SELECT id, name, location, organization_id, email, start_datetime, end_datetime FROM events LIMIT 1'
-    );
-
-    const row = result.rows[0];
-
-    if (!row) {
-        throw new NotFoundError('No events found.');
-    }
-
-    const event = new Event(
-        row.id,
-        row.name,
-        row.location,
-        row.organization_id,
-        row.email,
-        row.start_datetime,
-        row.end_datetime
-    );
-
-    return event;
-}
-
 export async function getEventById(id) {
 
     const result = await db_pool.query(
@@ -76,10 +51,6 @@ export async function getAllEvents(limit, offset) {
     }
 
     const allEvents = rows.map(row => {
-
-        if (!row.organization_id) {
-            throw new Error(`Event with id: ${row.id} has no organization_id`);
-        }
 
         return new Event(
             row.id,
@@ -183,7 +154,7 @@ export async function updateEvent(id, fields) {
     values.push(id);
 
     const result = await db_pool.query(
-        `UPDATE events SET ${setClauses.join(', ')} WHERE id = $${values.length} RETURNING id, name, location, organization_id, email, start_datetime, end_datetime`,
+        `UPDATE events SET ${setClauses.join(', ')} WHERE id = $${values.length} AND deleted_at IS NULL RETURNING id, name, location, organization_id, email, start_datetime, end_datetime`,
         values
     );
 

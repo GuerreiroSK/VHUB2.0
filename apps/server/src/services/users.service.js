@@ -1,5 +1,3 @@
-import ConflictError from "../errors/ConflictError.js";
-
 import {
     getUserData,
     getUserByEmail,
@@ -10,12 +8,7 @@ import {
     deleteUser as deleteUserRepo
 } from "../repositories/users.repository.js";
 
-export async function getUserTestMessage() {
-
-    const user = await getUserData();
-
-    return user.toPublic();
-}
+import ConflictError from "../errors/ConflictError.js";
 
 export async function getAllUsers() {
 
@@ -48,7 +41,7 @@ export async function createUser(name, email, password) {
 
 export async function updateUser(id, fields) {
 
-    await getUserById(id);
+    await getUserByIdRepo(id);
 
     if (fields.email) {
 

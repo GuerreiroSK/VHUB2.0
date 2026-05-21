@@ -2,29 +2,6 @@ import db_pool from "../db/index.js";
 import Organization from "../entities/Organization.js";
 import NotFoundError from "../errors/NotFoundError.js";
 
-export async function getOrganizationData() {
-
-    const result = await db_pool.query(
-        'SELECT id, name, email, description, location FROM organizations LIMIT 1'
-    );
-
-    const row = result.rows[0];
-
-    if (!row) {
-        throw new NotFoundError ('No organization found.');
-    }
-
-    const org = new Organization(
-        row.id,
-        row.name,
-        row.email,
-        row.description,
-        row.location
-    );
-
-    return org;
-}
-
 export async function getOrganizationById(id) {
 
     const result = await db_pool.query(
@@ -61,10 +38,6 @@ export async function getAllOrganizations() {
 
     const allOrganizations = rows.map(row => {
 
-        if (!row.id || !row.name) {
-            throw new Error (`Invalid organization data for row with id: ${row.id}`);
-        }
-
         return new Organization(
             row.id,
             row.name,
@@ -75,6 +48,22 @@ export async function getAllOrganizations() {
     });
     
     return allOrganizations;
+}
+
+export async function getOrganizationByEmail(email) {
+
+    const result = await db_pool.query(
+        'SELECT id, email FROM organizations WHERE email = $1 AND deleted_at IS NULL',
+        [email]
+    );
+
+    const row = result.rows[0];
+
+    if (!row) {
+        return null
+    }
+
+    return row;
 }
 
 export async function createOrganization(name, email, description, location) {
@@ -98,22 +87,6 @@ export async function createOrganization(name, email, description, location) {
     return newOrganzation;
 }
 
-export async function getOrganizationByEmail(email) {
-
-    const result = await db_pool.query(
-        'SELECT email FROM organizations WHERE email = $1 AND deleted_at IS NULL',
-        [email]
-    );
-
-    const row = result.rows[0];
-
-    if (!row) {
-        return null
-    }
-
-    return row;
-}
-
 export async function updateOrganization(id, fields) {
 
     const setClauses = [];
@@ -129,7 +102,7 @@ export async function updateOrganization(id, fields) {
     values.push(id);
 
     const result = await db_pool.query(
-        `UPDATE organizations SET ${setClauses.join(', ')} WHERE id = $${values.length} RETURNING id, name, email, description, location`,
+        `UPDATE organizations SET ${setClauses.join(', ')} WHERE id = $${values.length} AND deleted_at IS NULL RETURNING id, name, email, description, location`,
         values
     );
 
