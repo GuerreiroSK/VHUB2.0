@@ -64,10 +64,9 @@ export async function getUserById (req, res) {
 
             return res.status(404).json({ message: err.message });
 
-        } else {
+        } 
 
-            return res.status(500).json({ message: 'Internal server error.' });
-        }
+        return res.status(500).json({ message: 'Internal server error.' });
     }
 }
 
@@ -113,7 +112,9 @@ export async function updateUser(req, res) {
 
         return res.status(400).json({ message: 'id must be a positive integer' });
 
-    } else if (Object.keys(fields).length === 0) {
+    }
+     
+    if (Object.keys(fields).length === 0) {
 
         return res.status(400).json({ message: 'No fields were updated' });
 

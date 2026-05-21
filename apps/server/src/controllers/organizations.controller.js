@@ -65,7 +65,7 @@ export async function getAllOrganizations(req, res) {
 
     } catch (err) {
 
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
     }
 
 }
@@ -85,17 +85,15 @@ export async function getOrganizationById(req, res) {
 
         return res.json(organization);
 
-
     } catch (err) {
 
         if (err instanceof NotFoundError) {
 
             return res.status(404).json({ message: 'Organization not found' });
 
-        } else {
-
-            return res.status(500).json({ message: 'Internal server error' });
         }
+
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
@@ -120,10 +118,9 @@ export async function createOrganization(req, res) {
 
             return res.status(409).json({ message: err.message });
 
-        } else {
-
-            return res.status(500).json({ message: 'Internal server error' });
         }
+        
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
@@ -135,19 +132,19 @@ export async function updateOrganization(req, res) {
 
     const fields = {};
 
-    if (name !== undefined) fields.name = name;
-    if (email !== undefined) fields.email = email;
-    if (description !== undefined) fields.description = description;
-    if (location !== undefined) fields.location = location;
+    if (name) fields.name = name;
+    if (email) fields.email = email;
+    if (description) fields.description = description;
+    if (location) fields.location = location;
 
     if (!Number.isInteger(organizationId) || organizationId <= 0) {
 
         return res.status(400).json({ message: 'id must be a positive integer' });
-
-    } else if (Object.keys(fields).length === 0) {
+    } 
+    
+    if (Object.keys(fields).length === 0) {
 
         return res.status(400).json({ message: 'No fields were updated' });
-
     }
 
     try {
@@ -161,14 +158,14 @@ export async function updateOrganization(req, res) {
         if (err instanceof ConflictError) {
 
             return res.status(409).json({ message: err.message });
+        }
 
-        } else if (err instanceof NotFoundError) {
+        if (err instanceof NotFoundError) {
 
             return res.status(404).json({ message: 'Organization not found' });
-        } else {
-
-            return res.status(500).json({ message: 'Internal server error' });
         }
+
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
@@ -192,10 +189,8 @@ export async function deleteOrganization(req, res) {
         if (err instanceof NotFoundError) {
 
             return res.status(404).json({message: 'Organization not found'});
-
-        } else {
-
-            return res.status(500).json({message: 'Internal server error'});
         }
+
+        return res.status(500).json({message: 'Internal server error'});
     }
 }
