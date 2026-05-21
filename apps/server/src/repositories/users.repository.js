@@ -79,7 +79,7 @@ export async function getUserById(id) {
 export async function getUserByEmail(email) {
     
     const result = await db_pool.query(
-        'SELECT email FROM users WHERE email = $1', 
+        'SELECT id, email FROM users WHERE email = $1', 
         [email]
     );
 
@@ -109,4 +109,37 @@ export async function createUser(name, email, password) {
     );
 
     return newUser;
+}
+
+export async function updateUser(id, fields) {
+
+    const setClauses = [];
+    const values = [];
+
+    Object.entries(fields).forEach(([key, value]) => {
+
+        setClauses.push(`${key} = $${setClauses.length + 1}`);
+        values.push(value);
+
+    });
+
+    values.push(id);
+
+    const result = await db_pool.query(
+        `UPDATE users SET ${setClauses.join(', ')} WHERE id = $${values.length} RETURNING id, name, email, password`,
+        values
+    );
+
+    const row = result.rows[0];
+
+    if (!row) {
+        throw new NotFoundError ('User not found.');
+    }
+
+    return new User(
+        row.id,
+        row.name,
+        row.email,
+        row.password
+    );
 }
