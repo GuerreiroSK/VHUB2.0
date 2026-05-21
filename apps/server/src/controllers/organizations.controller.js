@@ -1,5 +1,4 @@
-import { getOrganizationTestMessage, 
-    getAllEventsByOrganizationId as getEventsByOrgId, 
+import { getAllEventsByOrganizationId as getEventsByOrgId, 
     getAllOrganizations as getAllOrganizationsService, 
     getOrganizationById as getOrganizationByIdService, 
     createOrganization as createOrganizationService, 
@@ -9,25 +8,6 @@ import { getOrganizationTestMessage,
 
 import NotFoundError from '../errors/NotFoundError.js';
 import ConflictError from '../errors/ConflictError.js';
-
-export async function organizationTest(req, res) {
-
-    try {
-        const org = await getOrganizationTestMessage();
-
-        return res.json(org);
-
-    } catch (err) {
-        if (err instanceof NotFoundError) {
-
-            return res.status(404).json({ message: err.message });
-
-        } else {
-
-            return res.status(500).json({ message: 'Internal server error.' });
-        }
-    }
-}
 
 export async function getAllEventsByOrganizationId(req, res) {
 

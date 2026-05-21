@@ -1,32 +1,12 @@
-import { getUserTestMessage, 
-    getAllUsers as getAllUsersService, 
+import { getAllUsers as getAllUsersService, 
     getUserById as getUserByIdService, 
     createUser as createUserService,
     updateUser as updateUserService,
     deleteUser as deleteUserService
 } from "../services/users.service.js";
+
 import NotFoundError from "../errors/NotFoundError.js";
 import ConflictError from "../errors/ConflictError.js";
-
-export async function userTest(req, res) {
-
-    try {
-        const user = await getUserTestMessage();
-    
-        return res.json(user);
-
-    } catch (err) {
-
-        if (err instanceof NotFoundError) {
-
-            return res.status(404).json({ message: err.message });
-
-        } else {
-
-            return res.status(500).json({ message: 'Internal server error.' });
-        }   
-    }
-}
 
 export async function getAllUsers(req, res) {
 
@@ -113,7 +93,7 @@ export async function updateUser(req, res) {
         return res.status(400).json({ message: 'id must be a positive integer' });
 
     }
-     
+
     if (Object.keys(fields).length === 0) {
 
         return res.status(400).json({ message: 'No fields were updated' });

@@ -1,6 +1,5 @@
 import express from 'express'
-import { organizationTest,
-     getAllEventsByOrganizationId, 
+import { getAllEventsByOrganizationId, 
      getAllOrganizations, 
      getOrganizationById, 
      createOrganization, 
@@ -8,20 +7,18 @@ import { organizationTest,
      deleteOrganization 
     } from '../controllers/organizations.controller.js'
 
-const testOrganizationsRouter = express.Router();
+const OrganizationsRouter = express.Router();
 
-testOrganizationsRouter.get('/organization_test', organizationTest);
+OrganizationsRouter.get('/', getAllOrganizations);
 
-testOrganizationsRouter.get('/', getAllOrganizations);
+OrganizationsRouter.get('/:id', getOrganizationById);
 
-testOrganizationsRouter.get('/:id', getOrganizationById);
+OrganizationsRouter.get('/:id/events', getAllEventsByOrganizationId);
 
-testOrganizationsRouter.get('/:id/events', getAllEventsByOrganizationId);
+OrganizationsRouter.post('/', createOrganization);
 
-testOrganizationsRouter.post('/', createOrganization);
+OrganizationsRouter.patch('/:id', updateOrganization);
 
-testOrganizationsRouter.patch('/:id', updateOrganization);
+OrganizationsRouter.delete('/:id', deleteOrganization);
 
-testOrganizationsRouter.delete('/:id', deleteOrganization);
-
-export default testOrganizationsRouter;
+export default OrganizationsRouter;

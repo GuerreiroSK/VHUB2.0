@@ -1,5 +1,4 @@
-import { getEventTestMessage,
-     getEventsWithOrganizations, 
+import { getEventsWithOrganizations, 
      getEventById as getEventByIdService,
      createEvent as createEventService,
      updateEvent as updateEventService,
@@ -8,12 +7,6 @@ import { getEventTestMessage,
     } from '../services/events.service.js';
 
 import NotFoundError from '../errors/NotFoundError.js';
-export async function eventTest (req, res) {
-
-    const event = await getEventTestMessage();
-
-    return res.json(event);
-}
 
 export async function getEventById (req, res) {
 

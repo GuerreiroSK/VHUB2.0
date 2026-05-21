@@ -1,6 +1,4 @@
-import {
-    getOrganizationData,
-    getOrganizationById as getOrganizationByIdRepo,
+import { getOrganizationById as getOrganizationByIdRepo,
     getAllOrganizations as getAllOrganizationsRepo,
     getOrganizationByEmail,
     createOrganization as createOrganizationRepo,
@@ -10,14 +8,6 @@ import {
 
 import { getAllEventsByOrganizationId as getEventsByOrganizationId } from '../repositories/events.repository.js';
 import ConflictError from '../errors/ConflictError.js';
-
-
-export async function getOrganizationTestMessage() {
-
-    const org = await getOrganizationData();
-
-    return org.toPublic();
-}
 
 export async function getAllEventsByOrganizationId(id) {
 
