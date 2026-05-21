@@ -28,7 +28,7 @@ export async function getUserData() {
 export async function getAllUsers() {
 
     const result = await db_pool.query(
-        'SELECT id, name, email, password FROM users'
+        'SELECT id, name, email, password FROM users WHERE deleted_at IS NULL'
     );
 
     const rows = result.rows;
@@ -38,10 +38,6 @@ export async function getAllUsers() {
     }
 
     const allUsers = rows.map(row => {
-
-        if (!row.id || !row.name) {
-            throw new Error (`Invalid user data for row with id: ${row.id}`);
-        }
 
         return new User (
             row.id,
@@ -57,7 +53,7 @@ export async function getAllUsers() {
 export async function getUserById(id) {
 
     const result = await db_pool.query(
-        'SELECT id, name, email FROM users WHERE id = $1',
+        'SELECT id, name, email, password FROM users WHERE id = $1 AND deleted_at IS NULL',
         [id]
     )
 
@@ -70,7 +66,8 @@ export async function getUserById(id) {
     const user = new User(
         row.id,
         row.name,
-        row.email
+        row.email,
+        row.password
     );
 
     return user;
@@ -96,7 +93,7 @@ export async function getUserByEmail(email) {
 export async function createUser(name, email, password) {
 
     const result = await db_pool.query(
-        'INSERT INTO users (name, email, password) VALUES ( $1, $2, $3) RETURNING id, name, email', 
+        'INSERT INTO users (name, email, password) VALUES ( $1, $2, $3) RETURNING id, name, email, password', 
     [name, email, password]);
 
     const row = result.rows[0];
