@@ -1,6 +1,4 @@
-import {
-    getUserData,
-    getUserByEmail,
+import { getUserByEmail,
     getAllUsers as getAllUsersRepo,
     getUserById as getUserByIdRepo,
     createUser as createUserRepo,
