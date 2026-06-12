@@ -37,3 +37,26 @@ export async function checkIfRegistered(userId, eventId) {
         row.created_at
     )
 }
+
+export async function getAttendeesByEventId(eventId) {
+
+    const result = await db_pool.query(
+        'SELECT user_id, event_id, created_at FROM event_attendees WHERE event_id = $1 AND deleted_at IS NULL',
+        [eventId]
+    )
+
+    if (result.rows.length === 0) {
+
+        return [];
+    }
+
+    const allAttendeesByEventId = result.rows.map( row => new EventAttendee(
+        
+        row.user_id,
+        row.event_id,
+        row.created_at
+
+    ))
+
+    return allAttendeesByEventId;
+}
