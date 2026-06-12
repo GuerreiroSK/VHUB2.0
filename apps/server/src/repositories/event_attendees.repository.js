@@ -1,6 +1,7 @@
 import db_pool from "../db/index.js";
 import EventAttendee from "../entities/EventAttendee.js";
 import Event from "../entities/Event.js";
+import NotFoundError from "../errors/NotFoundError.js";
 
 export async function registerToEvent(userId, eventId) {
 
@@ -90,4 +91,16 @@ export async function getEventsByUserId(userId) {
     })
 
     return allEventsByUserId;
+}
+
+export async function cancelRegistration(userId, eventId) {
+
+    const result = await db_pool.query(
+        'UPDATE event_attendees SET deleted_at = NOW() WHERE user_id = $1 AND event_id = $2 AND deleted_at IS NULL',
+        [userId, eventId]
+    )
+
+    if (result.rowCount === 0) {
+        throw new NotFoundError('Registration not found');
+    }
 }

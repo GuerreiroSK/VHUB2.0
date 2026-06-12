@@ -1002,3 +1002,55 @@ This document lists the backend API endpoints currently implemented in the proje
   - Service verifies event exists before querying attendees
 
   ---
+
+### DELETE /api/events/:id/attendees/:userId
+
+- Purpose:
+  Cancel a user's registration to a specific event (soft delete)
+
+- Method: DELETE
+
+- URL:
+  /api/events/:id/attendees/:userId
+
+- Route Params:
+  - id (positive integer) — the event ID
+  - userId (positive integer) — the user ID
+
+- Behavior:
+  - If eventId is not a positive integer → 400 Bad Request
+  - If userId is not a positive integer → 400 Bad Request
+  - If event does not exist → 404 Not Found
+  - If user does not exist → 404 Not Found
+  - If registration does not exist or already cancelled → 404 Not Found
+  - If successful → 204 No Content
+
+- Example Requests:
+  - DELETE /api/events/1/attendees/3
+  - DELETE /api/events/abc/attendees/3
+  - DELETE /api/events/1/attendees/9999
+
+- Response:
+  - 204 No Content (no body)
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "User not found." }
+
+  - 404 Not Found
+    { "message": "Event not found." }
+
+  - 404 Not Found
+    { "message": "Registration not found" }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error" }
+
+- Notes:
+  - Soft delete — sets deleted_at to NOW(), registration row is preserved
+  - Service checks user and event exist before attempting the update
+  - Repository uses rowCount to detect if registration existed
+
+  ---
