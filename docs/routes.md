@@ -898,3 +898,53 @@ This document lists the backend API endpoints currently implemented in the proje
   - Registration stored in event_attendees join table — no user details duplicated
 
   ---
+
+  ### GET /api/events/:id/attendees
+
+- Purpose:
+  Retrieve all attendees registered to a specific event
+
+- Method: GET
+
+- URL:
+  /api/events/:id/attendees
+
+- Route Params:
+  - id (positive integer) — the event ID
+
+- Behavior:
+  - If eventId is not a positive integer → 400 Bad Request
+  - If event does not exist → 404 Not Found
+  - If event exists but has no attendees → 200 OK with empty array
+  - If successful → 200 OK with array of registrations
+
+- Example Requests:
+  - GET /api/events/1/attendees
+  - GET /api/events/abc/attendees
+  - GET /api/events/9999/attendees
+
+- Response:
+  - 200 OK
+    [
+      {
+        "userId": 3,
+        "eventId": 1,
+        "createdAt": "2026-06-12T09:38:20.131Z"
+      }
+    ]
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "Event not found." }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error" }
+
+- Notes:
+  - Returns empty array if event exists but has no attendees
+  - Soft deleted registrations are excluded (deleted_at IS NULL)
+  - Service verifies event exists before querying attendees
+
+  ---
