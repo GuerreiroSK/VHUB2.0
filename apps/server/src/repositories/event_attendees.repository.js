@@ -1,5 +1,6 @@
 import db_pool from "../db/index.js";
 import EventAttendee from "../entities/EventAttendee.js";
+import Event from "../entities/Event.js";
 
 export async function registerToEvent(userId, eventId) {
 
@@ -59,4 +60,34 @@ export async function getAttendeesByEventId(eventId) {
     ))
 
     return allAttendeesByEventId;
+}
+
+export async function getEventsByUserId(userId) {
+
+    const result = await db_pool.query(
+        'SELECT id, name, location, organization_id, email, start_datetime, end_datetime FROM events JOIN event_attendees ON event_attendees.event_id = events.id WHERE user_id = $1 AND event_attendees.deleted_at IS NULL',
+        [userId]
+    )
+
+    const rows = result.rows
+
+    if (rows.length === 0) {
+
+        return [];
+    }
+
+    const allEventsByUserId = rows.map( row => {
+
+        return new Event(
+            row.id,
+            row.name,
+            row.location,
+            row.organization_id,
+            row.email,
+            row.start_datetime,
+            row.end_datetime
+        )
+    })
+
+    return allEventsByUserId;
 }

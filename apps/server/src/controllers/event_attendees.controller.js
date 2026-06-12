@@ -2,7 +2,8 @@ import ConflictError from "../errors/ConflictError.js";
 import NotFoundError from "../errors/NotFoundError.js";
 
 import { registerToAnEvent as registerToAnEventService,
-    getAttendeesByEventId as getAttendeesByEventIdService
+    getAttendeesByEventId as getAttendeesByEventIdService,
+    getEventsByUserId as getEventsByUserIdService
 } from "../services/event_attendees.service.js";
 
 export async function registerToAnEvent(req, res) {
@@ -58,6 +59,31 @@ export async function getAttendeesByEventId(req, res) {
 
         return res.status(200).json(attendees);
 
+    } catch (err) {
+
+        if (err instanceof NotFoundError) {
+
+            return res.status(404).json({message: err.message});
+        }
+
+        return res.status(500).json({message: 'Internal server error'});
+    }
+}
+
+export async function getEventsByUserId(req, res) {
+
+    const userId = Number(req.params.id);
+
+    if (!Number.isInteger(userId) || userId <= 0) {
+
+        return res.status(400).json({message: 'id must be a positive integer'});
+    }
+
+    try {
+
+        const eventsByUser = await getEventsByUserIdService(userId);
+
+        return res.status(200).json(eventsByUser);
     } catch (err) {
 
         if (err instanceof NotFoundError) {
