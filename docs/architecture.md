@@ -6,26 +6,37 @@ apps/server/
 │   │   ├── users.route.js
 │   │   ├── events.route.js
 │   │   └── organizations.route.js
+|   |
 │   ├── controllers/
 │   │   ├── users.controller.js
 │   │   ├── events.controller.js
-│   │   └── organizations.controller.js
+│   │   ├── organizations.controller.js
+|   |   └── event_attendees.controller.js
+|   |
 │   ├── services/
 │   │   ├── users.service.js
 │   │   ├── events.service.js
-│   │   └── organizations.service.js
+|   |   ├── organizations.service.js
+│   │   └── event_attendees.service.js
+|   |
 │   ├── repositories/
 │   │   ├── users.repository.js
 │   │   ├── events.repository.js
-│   │   └── organizations.repository.js
+|   |   ├── organizations.repository.js
+│   │   └── event_attendees.repository.js
+|   |
 │   ├── entities/
 │   │   ├── User.js
 │   │   ├── Event.js
-│   │   └── Organization.js
+|   |   ├── Organization.js
+│   │   └── EventAttendee.js
+|   |
 │   ├── db/
 │   │   └── index.js
+|   |
 │   ├── app.js        ← Express app configuration (middleware, routes)
 │   └── server.js     ← Application entry point
+|  
 ├── package.json
 ├── package-lock.json
 └── README.md
