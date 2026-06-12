@@ -1,7 +1,8 @@
 import ConflictError from "../errors/ConflictError.js";
 import { registerToEvent as registerToEventRepo,
     checkIfRegistered as checkIfRegisteredRepo,
-    getAttendeesByEventId as getAttendeesByEventIdRepo
+    getAttendeesByEventId as getAttendeesByEventIdRepo,
+    getEventsByUserId as getEventsByUserIdRepo
 } from "../repositories/event_attendees.repository.js";
 
 import { getEventById as getEventByIdRepo } from "../repositories/events.repository.js";
@@ -31,4 +32,13 @@ export async function getAttendeesByEventId(eventId) {
     const allAttendeesByEventId = await getAttendeesByEventIdRepo(eventId);
 
     return allAttendeesByEventId.map( eventAttendee => eventAttendee.toPublic());
+}
+
+export async function getEventsByUserId(userId) {
+
+    await getUserByIdRepo(userId);
+
+    const allEventsByUserId = await getEventsByUserIdRepo(userId);
+
+    return allEventsByUserId.map( userEvents => userEvents.toPublic());
 }
