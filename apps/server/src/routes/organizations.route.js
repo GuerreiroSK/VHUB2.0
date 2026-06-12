@@ -7,18 +7,18 @@ import { getAllEventsByOrganizationId,
      deleteOrganization 
     } from '../controllers/organizations.controller.js'
 
-const OrganizationsRouter = express.Router();
+const organizationsRouter = express.Router();
 
-OrganizationsRouter.get('/', getAllOrganizations);
+organizationsRouter.get('/', getAllOrganizations);
 
-OrganizationsRouter.get('/:id', getOrganizationById);
+organizationsRouter.get('/:id', getOrganizationById);
 
-OrganizationsRouter.get('/:id/events', getAllEventsByOrganizationId);
+organizationsRouter.get('/:id/events', getAllEventsByOrganizationId);
 
-OrganizationsRouter.post('/', createOrganization);
+organizationsRouter.post('/', createOrganization);
 
-OrganizationsRouter.patch('/:id', updateOrganization);
+organizationsRouter.patch('/:id', updateOrganization);
 
-OrganizationsRouter.delete('/:id', deleteOrganization);
+organizationsRouter.delete('/:id', deleteOrganization);
 
-export default OrganizationsRouter;
+export default organizationsRouter;

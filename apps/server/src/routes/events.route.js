@@ -1,19 +1,22 @@
 import express from 'express';
 
 import { eventsWithOrganizations, getEvents, getEventById, createEvent, updateEvent, deleteEvent } from '../controllers/events.controller.js';
+import { registerToAnEvent } from '../controllers/event_attendees.controller.js';
 
-const EventsRouter = express.Router();
+const eventsRouter = express.Router();
 
-EventsRouter.get('/with-organizations', eventsWithOrganizations);
+eventsRouter.get('/with-organizations', eventsWithOrganizations);
 
-EventsRouter.get('/', getEvents);
+eventsRouter.get('/', getEvents);
 
-EventsRouter.get('/:id', getEventById);
+eventsRouter.get('/:id', getEventById);
 
-EventsRouter.post('/', createEvent );
+eventsRouter.post('/', createEvent );
 
-EventsRouter.patch('/:id', updateEvent);
+eventsRouter.patch('/:id', updateEvent);
 
-EventsRouter.delete('/:id', deleteEvent);
+eventsRouter.delete('/:id', deleteEvent);
 
-export default EventsRouter;
+eventsRouter.post('/:id/attendees', registerToAnEvent);
+
+export default eventsRouter;

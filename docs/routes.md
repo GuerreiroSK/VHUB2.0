@@ -835,3 +835,66 @@ This document lists the backend API endpoints currently implemented in the proje
   - Hard delete not used — data retained for analytics and recovery
 
   ---
+
+  ### POST /api/events/:id/attendees
+
+- Purpose:
+  Register a user to an event
+
+- Method: POST
+
+- URL:
+  /api/events/:id/attendees
+
+- Route Params:
+  - id (positive integer) — the event ID
+
+- Body:
+  {
+    "userId": 1
+  }
+
+- Required Fields:
+  - userId
+
+- Behavior:
+  - If eventId is not a positive integer → 400 Bad Request
+  - If userId is not a positive integer → 400 Bad Request
+  - If event does not exist → 404 Not Found
+  - If user does not exist → 404 Not Found
+  - If user is already registered to this event → 409 Conflict
+  - If successful → 201 Created with registration object
+
+- Example Requests:
+  - POST /api/events/1/attendees with { "userId": 3 }
+  - POST /api/events/abc/attendees
+  - POST /api/events/9999/attendees with { "userId": 3 }
+
+- Response:
+  - 201 Created
+    {
+      "userId": 3,
+      "eventId": 1,
+      "createdAt": "2026-06-12T09:38:20.131Z"
+    }
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "Event not found." }
+
+  - 404 Not Found
+    { "message": "User not found." }
+
+  - 409 Conflict
+    { "message": "This is already registered to this event." }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error" }
+
+- Notes:
+  - userId will be derived from auth session in future auth implementation
+  - Registration stored in event_attendees join table — no user details duplicated
+
+  ---
