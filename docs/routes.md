@@ -240,6 +240,60 @@ This document lists the backend API endpoints currently implemented in the proje
 
 ---
 
+### GET /api/users/:id/events
+
+- Purpose:
+  Retrieve all events a specific user is registered to attend
+
+- Method: GET
+
+- URL:
+  /api/users/:id/events
+
+- Route Params:
+  - id (positive integer) — the user ID
+
+- Behavior:
+  - If userId is not a positive integer → 400 Bad Request
+  - If user does not exist → 404 Not Found
+  - If user exists but has no registrations → 200 OK with empty array
+  - If successful → 200 OK with array of events
+
+- Example Requests:
+  - GET /api/users/3/events
+  - GET /api/users/abc/events
+  - GET /api/users/9999/events
+
+- Response:
+  - 200 OK
+    [
+      {
+        "id": 1,
+        "eventName": "Beach Cleanup",
+        "location": "Carcavelos",
+        "organizationId": 1,
+        "email": "event@help.com",
+        "startDateTime": null,
+        "endDateTime": null
+      }
+    ]
+
+  - 400 Bad Request
+    { "message": "id must be a positive integer" }
+
+  - 404 Not Found
+    { "message": "User not found." }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error" }
+
+- Notes:
+  - Uses a SQL JOIN between event_attendees and events tables
+  - Soft deleted registrations are excluded (event_attendees.deleted_at IS NULL)
+  - Returns full event DTOs via Event.toPublic()
+  - Route lives under /api/users — userId is the primary resource
+
+---
 ## Organizations
 
 ### GET /api/organizations
