@@ -4,20 +4,23 @@ apps/server/
 ├── src/
 │   ├── routes/
 │   │   ├── users.route.js
-│   │   ├── events.route.js
-│   │   └── organizations.route.js
+│   |   ├── events.route.js
+│   |   ├── organizations.route.js
+│   |   └── auth.route.js
 |   |
 │   ├── controllers/
 │   │   ├── users.controller.js
-│   │   ├── events.controller.js
-│   │   ├── organizations.controller.js
-|   |   └── event_attendees.controller.js
+│   |   ├── events.controller.js
+│   |   ├── organizations.controller.js
+│   |   ├── event_attendees.controller.js
+│   |   └── auth.controller.js
 |   |
 │   ├── services/
 │   │   ├── users.service.js
-│   │   ├── events.service.js
-|   |   ├── organizations.service.js
-│   │   └── event_attendees.service.js
+│   |   ├── events.service.js
+│   |   ├── organizations.service.js
+│   |   ├── event_attendees.service.js
+│   |   └── auth.service.js
 |   |
 │   ├── repositories/
 │   │   ├── users.repository.js
@@ -30,6 +33,12 @@ apps/server/
 │   │   ├── Event.js
 |   |   ├── Organization.js
 │   │   └── EventAttendee.js
+|   |
+|   ├── errors/
+│   |   ├── NotFoundError.js
+│   |   ├── ConflictError.js
+│   |   └── UnauthorizedError.js
+|   |
 |   |
 |   ├── scripts/
 |   |   └── seed.js
