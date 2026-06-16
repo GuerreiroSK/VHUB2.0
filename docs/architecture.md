@@ -31,11 +31,14 @@ apps/server/
 |   |   ├── Organization.js
 │   │   └── EventAttendee.js
 |   |
-│   ├── db/
-│   │   └── index.js
+|   ├── scripts/
+|   |   └── seed.js
 |   |
-│   ├── app.js        ← Express app configuration (middleware, routes)
-│   └── server.js     ← Application entry point
+│   ├── db/
+│   │   └── index.js   ← Standalone dev tools, not part of the request-handling app
+|   |
+│   ├── app.js         ← Express app configuration (middleware, routes)
+│   └── server.js      ← Application entry point
 |  
 ├── package.json
 ├── package-lock.json
