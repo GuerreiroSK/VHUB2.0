@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import { getUserByEmail,
     getAllUsers as getAllUsersRepo,
     getUserById as getUserByIdRepo,
@@ -31,8 +32,10 @@ export async function createUser(name, email, password) {
         throw new ConflictError('This email already exists/registered');
 
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     
-    const createdUser = await createUserRepo(name, email, password);
+    const createdUser = await createUserRepo(name, email, hashedPassword);
 
     return createdUser.toPublic();
 }
