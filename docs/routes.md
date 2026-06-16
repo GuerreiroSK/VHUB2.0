@@ -1054,3 +1054,58 @@ This document lists the backend API endpoints currently implemented in the proje
   - Repository uses rowCount to detect if registration existed
 
   ---
+
+### POST /api/auth/login
+
+- Purpose:
+  Authenticate a user with email and password
+
+- Method: POST
+
+- URL:
+  /api/auth/login
+
+- Body:
+  {
+    "email": "user1@email.com",
+    "password": "123"
+  }
+
+- Required Fields:
+  - email
+  - password
+
+- Behavior:
+  - If email or password missing → 400 Bad Request
+  - If email not found → 404 Not Found
+  - If password incorrect → 401 Unauthorized
+  - If both match → 200 OK with user object
+
+- Example Request:
+  POST /api/auth/login
+
+- Response:
+  - 200 OK
+    {
+      "id": 1,
+      "name": "User1",
+      "email": "user1@email.com"
+    }
+
+  - 400 Bad Request
+    { "message": "Email and Password fields cannot be empty." }
+
+  - 404 Not Found
+    { "message": "User not found." }
+
+  - 401 Unauthorized
+    { "message": "Unauthorized access." }
+
+  - 500 Internal Server Error
+    { "message": "Internal server error." }
+
+- Notes:
+  - Password is never returned in the response — toPublic() strips it
+  - JWT token will be added to the response body in a future branch
+
+  ---

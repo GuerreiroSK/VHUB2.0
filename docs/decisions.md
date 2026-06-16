@@ -123,3 +123,72 @@ Remove `AND deleted_at IS NULL` from `getOrganizationByEmail` — email uniquene
 - seed.js has no dotenv import — cleaner file, no false sense of security
 - package.json "seed" script handles the flag: node --env-file=.env src/scripts/seed.js
 - Run via npm run seed from inside apps/server/
+
+---
+
+## Password Hashing with bcrypt on User Creation
+
+**Decision**
+Passwords are hashed with bcrypt before being stored in the database. Plain text passwords are never persisted.
+
+**Why**
+- Storing plain text passwords means anyone with database access can read every user's password
+- Most users reuse passwords across multiple services — a leaked password here could compromise their email, bank, and other accounts
+- Hashing is one-way — even if the database is compromised, the original password cannot be recovered
+- bcrypt adds a random salt to every hash, so two identical passwords produce different hashes — protecting against rainbow table attacks
+- Salt rounds (set to 10) make each hash computationally expensive, slowing down brute-force attempts
+
+**Trade-off**
+- `createUser` now has an extra async operation (the hash) before every insert
+- Negligible performance cost at low scale; intentional slowness is the point
+
+**Result**
+- `users.service.js` calls `bcrypt.hash(password, 10)` before passing to the repository
+- The repository receives and stores only the hashed value
+- Plain text passwords never touch the database
+
+---
+
+## UnauthorizedError as a New Typed Error
+
+**Decision**
+A new `UnauthorizedError` class was created to represent authentication failures, mapping to HTTP 401.
+
+**Why**
+- `NotFoundError` (404) and `ConflictError` (409) don't cover authentication failures
+- A dedicated typed error allows controllers to map it precisely to 401 Unauthorized
+- More reusable than a `WrongPasswordError` — will cover future cases like expired JWT tokens, missing tokens, or insufficient permissions
+- Consistent with the existing pattern: one typed error per HTTP error category
+
+**Trade-off**
+- Another error file to maintain
+- Worth it for consistency and future reuse
+
+**Result**
+- `UnauthorizedError.js` added to `src/errors/`
+- `auth.service.js` throws `UnauthorizedError` when `bcrypt.compare()` returns `false`
+- `auth.controller.js` catches it and returns 401
+
+---
+
+## Auth as a Separate Layer, Not Inside Users
+
+**Decision**
+Login logic lives in dedicated `auth.service.js`, `auth.controller.js`, and `auth.route.js` files — not inside the existing users layer.
+
+**Why**
+- Login is an authentication concern, not a user management concern
+- Mixing auth logic into `users.service.js` would make it responsible for two different things — violating single responsibility
+- A separate auth layer can grow independently: logout, JWT refresh, OAuth, roles — none of which belong in user CRUD
+- `POST /api/auth/login` is semantically cleaner than `POST /api/users/login`
+
+**Trade-off**
+- `auth.service.js` imports from `users.repository.js` — a cross-domain import, but acceptable since auth needs user data to verify credentials
+
+**Result**
+- `src/routes/auth.route.js` — mounts at `/api/auth`
+- `src/controllers/auth.controller.js` — handles req/res for auth endpoints
+- `src/services/auth.service.js` — contains login logic
+- `app.js` mounts `authRouter` at `/api/auth`
+
+---
