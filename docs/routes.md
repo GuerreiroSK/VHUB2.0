@@ -170,12 +170,13 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
+  - If requesting user is not the target user → 401 Unauthorized
   - If id is not a positive integer → 400 Bad Request
   - If no valid fields in body → 400 Bad Request
   - If email already belongs to another user → 409 Conflict
   - If user not found → 404 Not Found
   - If valid → 200 OK with updated user object
-
+  
 - Example Requests:
   - PATCH /api/users/1
   - PATCH /api/users/abc
@@ -191,6 +192,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - 401 Unauthorized
     { "message": "No token provided." }
     { "message": "Invalid token." }
+    { "message": "Unauthorized access" }   
 
   - 404 Not Found
     { "message": "User not found." }
@@ -226,6 +228,7 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
+  - If requesting user is not the target user → 401 Unauthorized
   - If id is not a positive integer → 400 Bad Request
   - If user not found or already deleted → 404 Not Found
   - If valid → 204 No Content
@@ -243,6 +246,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - 401 Unauthorized
     { "message": "No token provided." }
     { "message": "Invalid token." }
+    { "message": "Unauthorized access" }  
 
   - 404 Not Found
     { "message": "User not found" }
