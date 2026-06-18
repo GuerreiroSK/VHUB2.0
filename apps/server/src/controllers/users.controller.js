@@ -7,6 +7,7 @@ import { getAllUsers as getAllUsersService,
 
 import NotFoundError from "../errors/NotFoundError.js";
 import ConflictError from "../errors/ConflictError.js";
+import UnauthorizedError from "../errors/UnauthorizedError.js";
 
 export async function getAllUsers(req, res) {
 
@@ -102,7 +103,7 @@ export async function updateUser(req, res) {
 
     try {
 
-        const updatedUser = await updateUserService(userId, fields);
+        const updatedUser = await updateUserService(userId, fields, req.userId);
 
         return res.status(200).json(updatedUser);
 
@@ -118,6 +119,11 @@ export async function updateUser(req, res) {
             return res.status(404).json({ message: 'User not found' });
             
         }
+        if (err instanceof UnauthorizedError) {
+
+            return res.status(401).json({ message: 'Unauthorized access'});
+        }
+         
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
@@ -133,7 +139,7 @@ export async function deleteUser(req, res) {
 
     try {
 
-        await deleteUserService(userId);
+        await deleteUserService(userId, req.userId);
 
         return res.status(204).send();
 
@@ -142,7 +148,11 @@ export async function deleteUser(req, res) {
         if (err instanceof NotFoundError) {
 
             return res.status(404).json({message: 'User not found'});
+        }
 
+        if (err instanceof UnauthorizedError) {
+            
+            return res.status(401).json({message: 'Unauthorized access'});
         }
         
         return res.status(500).json({message: 'Internal server error'});
