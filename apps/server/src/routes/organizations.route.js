@@ -1,11 +1,13 @@
-import express from 'express'
+import express from 'express';
 import { getAllEventsByOrganizationId, 
      getAllOrganizations, 
      getOrganizationById, 
      createOrganization, 
      updateOrganization, 
      deleteOrganization 
-    } from '../controllers/organizations.controller.js'
+    } from '../controllers/organizations.controller.js';
+
+import { verifyToken } from '../middleware/auth.middleware.js';
 
 const organizationsRouter = express.Router();
 
@@ -15,10 +17,10 @@ organizationsRouter.get('/:id', getOrganizationById);
 
 organizationsRouter.get('/:id/events', getAllEventsByOrganizationId);
 
-organizationsRouter.post('/', createOrganization);
+organizationsRouter.post('/', verifyToken, createOrganization);
 
-organizationsRouter.patch('/:id', updateOrganization);
+organizationsRouter.patch('/:id', verifyToken, updateOrganization);
 
-organizationsRouter.delete('/:id', deleteOrganization);
+organizationsRouter.delete('/:id', verifyToken, deleteOrganization);
 
 export default organizationsRouter;
