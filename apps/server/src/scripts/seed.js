@@ -15,7 +15,9 @@ const usersData = [
     { name: 'User2', email: 'user2@email.com', password: '123' },
     { name: 'User3', email: 'user3@email.com', password: '123' },
     { name: 'User4', email: 'user4@email.com', password: '123' },
-    { name: 'User5', email: 'user5@email.com', password: '123' }
+    { name: 'User5', email: 'user5@email.com', password: '123' },
+    { name: 'Admin', email: 'admin@email.com', password: '12345' },
+    { name: 'Developer', email: 'developer@email.com', password: '54321' },
 ];
 
 const createdUsers = [];
@@ -26,6 +28,10 @@ for (const newEntry of usersData) {
 
     createdUsers.push(newUser);
 };
+
+await db_pool.query("UPDATE users SET role = 'admin' WHERE email = 'admin@email.com'");
+
+await db_pool.query("UPDATE users SET role = 'developer' WHERE email = 'developer@email.com'");
 
 console.log('✅ Users created:', createdUsers.length);
 

@@ -8,6 +8,7 @@ import { getAllEventsByOrganizationId,
     } from '../controllers/organizations.controller.js';
 
 import { verifyToken } from '../middleware/auth.middleware.js';
+import { requireRole } from '../middleware/role.middleware.js';
 
 const organizationsRouter = express.Router();
 
@@ -21,6 +22,6 @@ organizationsRouter.post('/', verifyToken, createOrganization);
 
 organizationsRouter.patch('/:id', verifyToken, updateOrganization);
 
-organizationsRouter.delete('/:id', verifyToken, deleteOrganization);
+organizationsRouter.delete('/:id', verifyToken, requireRole(['admin']) ,deleteOrganization);
 
 export default organizationsRouter;
