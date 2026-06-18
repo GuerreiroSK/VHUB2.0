@@ -8,6 +8,7 @@ import { getUserByEmail,
 } from "../repositories/users.repository.js";
 
 import ConflictError from "../errors/ConflictError.js";
+import UnauthorizedError from "../errors/UnauthorizedError.js";
 
 export async function getAllUsers() {
 
@@ -40,9 +41,14 @@ export async function createUser(name, email, password) {
     return createdUser.toPublic();
 }
 
-export async function updateUser(id, fields) {
+export async function updateUser(id, fields, requestingUserId) {
 
     await getUserByIdRepo(id);
+
+    if (id !== requestingUserId) {
+
+        throw new UnauthorizedError('Unauthorized access.');
+    }
 
     if (fields.email) {
 
@@ -59,7 +65,12 @@ export async function updateUser(id, fields) {
     return updatedUser.toPublic();
 }
 
-export async function deleteUser(id) {
+export async function deleteUser(id, requestingUserId) {
+
+    if (id !== requestingUserId) {
+
+        throw new UnauthorizedError('Unauthorized access.')
+    }
 
     await deleteUserRepo(id);
 }
