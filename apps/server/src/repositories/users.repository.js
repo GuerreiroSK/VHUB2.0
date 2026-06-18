@@ -5,7 +5,7 @@ import NotFoundError from '../errors/NotFoundError.js';
 export async function getAllUsers() {
 
     const result = await db_pool.query(
-        'SELECT id, name, email, password FROM users WHERE deleted_at IS NULL'
+        'SELECT id, name, email, password, role FROM users WHERE deleted_at IS NULL'
     );
 
     const rows = result.rows;
@@ -20,7 +20,8 @@ export async function getAllUsers() {
             row.id,
             row.name,
             row.email,
-            row.password
+            row.password,
+            row.role
         );
     });
 
@@ -30,7 +31,7 @@ export async function getAllUsers() {
 export async function getUserById(id) {
 
     const result = await db_pool.query(
-        'SELECT id, name, email, password FROM users WHERE id = $1 AND deleted_at IS NULL',
+        'SELECT id, name, email, password, role FROM users WHERE id = $1 AND deleted_at IS NULL',
         [id]
     )
 
@@ -44,7 +45,8 @@ export async function getUserById(id) {
         row.id,
         row.name,
         row.email,
-        row.password
+        row.password,
+        row.role
     );
 
     return user;
@@ -70,7 +72,7 @@ export async function getUserByEmail(email) {
 export async function createUser(name, email, password) {
 
     const result = await db_pool.query(
-        'INSERT INTO users (name, email, password) VALUES ( $1, $2, $3) RETURNING id, name, email, password', 
+        'INSERT INTO users (name, email, password) VALUES ( $1, $2, $3 ) RETURNING id, name, email, password, role', 
     [name, email, password]);
 
     const row = result.rows[0];
@@ -79,7 +81,8 @@ export async function createUser(name, email, password) {
         row.id,
         row.name,
         row.email,
-        row.password
+        row.password,
+        row.role
     );
 
     return newUser;
