@@ -603,6 +603,7 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
+  - If user role is not admin → 401 Unauthorized
   - If `id` is invalid (not a positive integer) → 400 Bad Request
   - If organization does not exist → 404 Not Found
   - If successful → 204 No Content
@@ -621,6 +622,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - 401 Unauthorized
     { "message": "No token provided." }
     { "message": "Invalid token." }
+    { "message": "Unauthorized Access." }
 
   - 404 Not Found
     { "message": "Organization not found." }

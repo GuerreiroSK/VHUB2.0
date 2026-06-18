@@ -212,3 +212,22 @@ The user's role is included in the JWT payload (`{ id, role }`) at login and rea
 - `auth.middleware.js` attaches `req.userRole = verification.role` on every verified request
 
 ---
+
+## Raw SQL for Role Assignment in Seed Script
+
+**Decision**
+Role assignment for admin and developer users in `seed.js` is done via raw `db_pool.query()` after user creation, not through the service layer.
+
+**Why**
+- `createUser` service intentionally does not accept a `role` parameter — users cannot set their own role
+- The seed script is a dev tool, not a real API request — bypassing the service for role assignment is acceptable here
+- Users are still created via the service (password hashing, email uniqueness checks all run normally)
+- Role update is a separate explicit step, making the intent clear
+
+**Trade-off**
+- Direct DB call in the seed — acceptable for a dev tool, never for production code
+
+**Result**
+- `seed.js` calls `createUser` for all users, then raw SQL to set `'admin'` and `'developer'` roles on specific users by email
+
+---

@@ -40,6 +40,7 @@ apps/server/
 │   |   └── UnauthorizedError.js
 |   |
 |   ├── middleware/
+|   |   ├── role.middleware.js
 │   |   └── auth.middleware.js
 |   |
 |   ├── scripts/
