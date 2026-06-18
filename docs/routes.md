@@ -864,21 +864,28 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If `id` is invalid (not a positive integer) → 400 Bad Request
   - If event does not exist or is already deleted → 404 Not Found
-  - If successful → 204 No Content
+  - If Authorization header is missing → 401 Unauthorized
+  - If token is invalid or expired → 401 Unauthorized
+  - If event not found → 404 Not Found
+  - If valid token and event exists → soft deletes, returns 204
 
 - Example Requests:
   - DELETE /api/events/1
   - DELETE /api/events/abc
   - DELETE /api/events/9999
 
-- Response:
-  - 204 No Content (no body)
+- Headers (required):
+  Authorization: Bearer <token>
 
-  - 400 Bad Request
-    { "message": "id must be a positive integer" }
+- Response:
+  - 204 No Content
+
+  - 401 Unauthorized
+    { "message": "No token provided." }
+    { "message": "Invalid token." }
 
   - 404 Not Found
-    { "message": "Event not found" }
+    { "message": "Event not found." }
 
   - 500 Internal Server Error
     { "message": "Internal server error." }
