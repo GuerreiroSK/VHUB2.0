@@ -39,6 +39,8 @@ apps/server/
 │   |   ├── ConflictError.js
 │   |   └── UnauthorizedError.js
 |   |
+|   ├── middleware/
+│   |   └── auth.middleware.js
 |   |
 |   ├── scripts/
 |   |   └── seed.js
@@ -52,6 +54,16 @@ apps/server/
 ├── package.json
 ├── package-lock.json
 └── README.md
+
+
+## Migrations
+
+docs/migrations/
+├── 001_add_soft_delete_and_event_dates.sql
+├── 002_fix_events_organizations_fk.sql
+├── 003_add_soft_delete_to_users.sql
+├── 004_add_event_attendees_table.sql
+└── 005_add_role_to_users.sql
 
 
 ## Backend Layered Architecture
@@ -94,12 +106,17 @@ route → controller → service → repository → database → entity → serv
   - Return entities, not raw database rows
   - Validate data before constructing entities to ensure domain integrity
 
-
 - **Entities (`src/entities`)**
   - Represent domain concepts (User, Event, Organization)
   - Encapsulate identity and invariants
   - Control public data exposure ( e.g. toPublic() )
   - Know nothing about HTTP or databases
+
+- **Middleware (`src/middleware`)**
+  - Sits between routes and controllers
+  - Intercepts requests before they reach controllers
+  - Verifies JWT tokens and attaches `req.userId` and `req.userRole`
+  - Returns 401 if token is missing or invalid — controller never runs
 
 - **Database Module (`src/db`)**
  - Creates and exports a shared PostgreSQL connection pool
