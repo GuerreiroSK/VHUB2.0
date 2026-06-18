@@ -19,4 +19,4 @@ userRouter.delete('/:id', verifyToken, deleteUser);
 
 userRouter.get('/:id/events', getEventsByUserId);
 
-export default userRouter;feat: add middleware to write operations in users, organizations and events routes
+export default userRouter;
