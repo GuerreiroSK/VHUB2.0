@@ -192,3 +192,23 @@ Login logic lives in dedicated `auth.service.js`, `auth.controller.js`, and `aut
 - `app.js` mounts `authRouter` at `/api/auth`
 
 ---
+
+## Role Stored in JWT Payload, Not Fetched from DB
+
+**Decision**
+The user's role is included in the JWT payload (`{ id, role }`) at login and read from the token on every request via `req.userRole`. No DB call is made to fetch the role on each request.
+
+**Why**
+- JWT verification is stateless — no DB call needed to know who the user is or what role they have
+- Fetching role from DB on every request adds latency and couples auth to the database unnecessarily
+- The token is signed — the role cannot be tampered with without invalidating the signature
+
+**Trade-off**
+- If a user's role changes, their existing token still carries the old role until it expires (24h)
+- Acceptable for now — role changes will be rare and admin-controlled
+
+**Result**
+- `auth.service.js` includes `role: user.role` in `jwt.sign()` payload
+- `auth.middleware.js` attaches `req.userRole = verification.role` on every verified request
+
+---

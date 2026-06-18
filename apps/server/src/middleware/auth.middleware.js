@@ -17,6 +17,8 @@ export async function verifyToken(req, res, next) {
 
         req.userId = verification.id;
 
+        req.userRole = verification.role;
+
         next();
 
     } catch (err) {

@@ -24,7 +24,7 @@ export async function login(email, password) {
         throw new UnauthorizedError('Unauthorized access.');
     }
 
-    const token = jwt.sign( { id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' } );
+    const token = jwt.sign( { id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' } );
 
     return { ...user.toPublic(), token };
 }

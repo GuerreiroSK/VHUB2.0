@@ -37,6 +37,7 @@ Columns:
   - stored as a string; hashing handled by application layer during auth
 - `created_at` (NOT NULL, default `now()`)
 - `deleted_at` (NULLABLE) — soft delete timestamp; NULL means active
+- `role` (NOT NULL, default `'volunteer'`) — user's permission level; assigned at registration, changeable by admin only
 
 Constraints:
 - Primary key: `users.id`
@@ -135,6 +136,7 @@ Enforced by:
 | Added `start_datetime` | `events` | Event scheduling |
 | Added `end_datetime` | `events` | Event scheduling |
 | Fixed FK constraint | `events` | `events_organizations_fk` was referencing `events.id` instead of `events.organization_id` |
+| Added `role` | `users` | Role column for permission levels; defaults to `'volunteer'` |
 
 ---
 
@@ -142,6 +144,5 @@ Enforced by:
 
 The following concepts are intentionally not implemented yet:
 
-- Roles / permissions (admins, org members, etc.)
 - Status fields (published/canceled/etc.)
 - Capacity limits
