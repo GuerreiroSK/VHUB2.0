@@ -3,6 +3,8 @@ import express from 'express';
 import { getAllUsers, getUserById, createUser, updateUser, deleteUser} from '../controllers/users.controller.js';
 import { getEventsByUserId } from '../controllers/event_attendees.controller.js';
 
+import { verifyToken } from '../middleware/auth.middleware.js';
+
 const userRouter = express.Router();
 
 userRouter.get('/', getAllUsers);
@@ -11,10 +13,10 @@ userRouter.get('/:id', getUserById);
 
 userRouter.post('/', createUser);
 
-userRouter.patch('/:id', updateUser);
+userRouter.patch('/:id', verifyToken, updateUser);
 
-userRouter.delete('/:id', deleteUser);
+userRouter.delete('/:id', verifyToken, deleteUser);
 
 userRouter.get('/:id/events', getEventsByUserId);
 
-export default userRouter;
+export default userRouter;feat: add middleware to write operations in users, organizations and events routes

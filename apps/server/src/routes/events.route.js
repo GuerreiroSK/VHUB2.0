@@ -12,16 +12,16 @@ eventsRouter.get('/', getEvents);
 
 eventsRouter.get('/:id', getEventById);
 
-eventsRouter.post('/', createEvent );
+eventsRouter.post('/', verifyToken, createEvent );
 
-eventsRouter.patch('/:id', updateEvent);
+eventsRouter.patch('/:id', verifyToken, updateEvent);
 
 eventsRouter.delete('/:id', verifyToken, deleteEvent);
 
-eventsRouter.post('/:id/attendees', registerToAnEvent);
+eventsRouter.post('/:id/attendees', verifyToken, registerToAnEvent);
 
 eventsRouter.get('/:id/attendees', getAttendeesByEventId);
 
-eventsRouter.delete('/:id/attendees/:userId', cancelRegistration);
+eventsRouter.delete('/:id/attendees/:userId', verifyToken, cancelRegistration);
 
 export default eventsRouter;
