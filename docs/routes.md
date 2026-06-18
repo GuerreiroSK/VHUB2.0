@@ -1089,7 +1089,8 @@ This document lists the backend API endpoints currently implemented in the proje
     {
       "id": 1,
       "name": "User1",
-      "email": "user1@email.com"
+      "email": "user1@email.com",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     }
 
   - 400 Bad Request
