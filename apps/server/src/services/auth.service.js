@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import { getUserByEmail, getUserById } from '../repositories/users.repository.js';
 
@@ -22,7 +23,9 @@ export async function login(email, password) {
 
         throw new UnauthorizedError('Unauthorized access.');
     }
-    
-    return user.toPublic();
+
+    const token = jwt.sign( { id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' } );
+
+    return { ...user.toPublic(), token };
 }
 
