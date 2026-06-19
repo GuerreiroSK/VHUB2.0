@@ -41,11 +41,11 @@ export async function createUser(name, email, password) {
     return createdUser.toPublic();
 }
 
-export async function updateUser(id, fields, requestingUserId) {
+export async function updateUser(id, fields, requestingUserId, requestingUserRole) {
 
     await getUserByIdRepo(id);
 
-    if (id !== requestingUserId) {
+    if (id !== requestingUserId && !['admin', 'developer'].includes(requestingUserRole)) {
 
         throw new UnauthorizedError('Unauthorized access.');
     }
@@ -65,9 +65,9 @@ export async function updateUser(id, fields, requestingUserId) {
     return updatedUser.toPublic();
 }
 
-export async function deleteUser(id, requestingUserId) {
+export async function deleteUser(id, requestingUserId, requestingUserRole) {
 
-    if (id !== requestingUserId) {
+    if (id !== requestingUserId && !['admin' ,'developer'].includes(requestingUserRole)) {
 
         throw new UnauthorizedError('Unauthorized access.')
     }

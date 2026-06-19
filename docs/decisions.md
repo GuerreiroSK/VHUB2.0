@@ -231,3 +231,42 @@ Role assignment for admin and developer users in `seed.js` is done via raw `db_p
 - `seed.js` calls `createUser` for all users, then raw SQL to set `'admin'` and `'developer'` roles on specific users by email
 
 ---
+
+## requireRole as a Middleware Factory
+
+**Decision**
+Role checking is handled by a reusable middleware factory `requireRole(roles)` in `src/middleware/role.middleware.js`, not inside individual service functions.
+
+**Why**
+- Role checking is not business logic — it is an access control concern that belongs before the controller runs
+- A middleware factory keeps the check reusable — one function works for any combination of roles across any route
+- Adding `requireRole(['admin', 'developer'])` to a route is explicit and readable — you can see which routes are protected just by reading the router file
+- Avoids duplicating role checks across multiple service functions
+
+**Trade-off**
+- Role check happens before the controller — if the resource doesn't exist, the user gets 401 before 404. Acceptable for now.
+
+**Result**
+- `role.middleware.js` exports `requireRole(roles)` — accepts an array of allowed roles, returns a middleware function
+- Uses `Array.includes()` to check `req.userRole` against the allowed list
+- Must always run after `verifyToken` — `req.userRole` doesn't exist until the token is verified
+- Applied to all write operations on organizations and events
+
+---
+
+## Admin and Developer Bypass on User Ownership Checks
+
+**Decision**
+The ownership checks in `updateUser` and `deleteUser` services are bypassed when the requesting user has the `admin` or `developer` role.
+
+**Why**
+- Admins and developers need to be able to manage any user account — blocking them with ownership checks would make administration impossible
+- The bypass is implemented in the service layer (business logic), not the middleware — it is a domain decision, not an access control decision
+- `req.userRole` is passed from the controller to the service alongside `req.userId`
+
+**Trade-off**
+- Service functions now have slightly more complex signatures — acceptable given the clear separation of concerns
+
+**Result**
+- `deleteUser(id, requestingUserId, requestingUserRole)` and `updateUser(id, fields, requestingUserId, requestingUserRole)` check: if `id !== requestingUserId` AND role is not admin or developer → throw `UnauthorizedError`
+- Admins and developers can update or delete any user account

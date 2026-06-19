@@ -170,13 +170,13 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
-  - If requesting user is not the target user → 401 Unauthorized
+  - If requesting user is not the target user → 401 Unauthorized (bypassed for admin and developer roles)
   - If id is not a positive integer → 400 Bad Request
   - If no valid fields in body → 400 Bad Request
   - If email already belongs to another user → 409 Conflict
   - If user not found → 404 Not Found
   - If valid → 200 OK with updated user object
-  
+
 - Example Requests:
   - PATCH /api/users/1
   - PATCH /api/users/abc
@@ -192,7 +192,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - 401 Unauthorized
     { "message": "No token provided." }
     { "message": "Invalid token." }
-    { "message": "Unauthorized access" }   
+    { "message": "Unauthorized access" }
 
   - 404 Not Found
     { "message": "User not found." }
@@ -205,7 +205,8 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Notes:
   - Empty strings are treated as no value — only truthy values are added to the update
-  - Service checks user exists before email conflict check to ensure correct error priority
+  - Service checks user exists before ownership check to ensure correct error priority
+  - Admins and developers can update any user — ownership check is bypassed for these roles
 
 ---
 
@@ -228,7 +229,7 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
-  - If requesting user is not the target user → 401 Unauthorized
+  - If requesting user is not the target user → 401 Unauthorized (bypassed for admin and developer roles)
   - If id is not a positive integer → 400 Bad Request
   - If user not found or already deleted → 404 Not Found
   - If valid → 204 No Content
@@ -246,7 +247,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - 401 Unauthorized
     { "message": "No token provided." }
     { "message": "Invalid token." }
-    { "message": "Unauthorized access" }  
+    { "message": "Unauthorized access" }
 
   - 404 Not Found
     { "message": "User not found" }
@@ -256,6 +257,7 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Notes:
   - Soft delete — sets deleted_at to NOW(), does not remove the row
+  - Admins and developers can delete any user — ownership check is bypassed for these roles
 
 ---
 
@@ -459,6 +461,7 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Headers (required):
   Authorization: Bearer <token>
+  Required role: admin, developer
 
 - Body (JSON):
   {
@@ -479,6 +482,7 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
+  - If user role is not admin or developer → 401 Unauthorized
   - If required fields are missing → 400 Bad Request
   - If email already exists → 409 Conflict
   - If successful → 201 Created with new organization
@@ -499,6 +503,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - 401 Unauthorized
     { "message": "No token provided." }
     { "message": "Invalid token." }
+    { "message": "Unauthorized Access." }
 
   - 409 Conflict
     { "message": "This email already exists/registered" }
@@ -527,6 +532,7 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Headers (required):
   Authorization: Bearer <token>
+  Required role: admin, developer
 
 - Body (JSON — all fields optional, at least one required):
   {
@@ -539,6 +545,7 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
+  - If user role is not admin or developer → 401 Unauthorized
   - If `id` is invalid (not a positive integer) → 400 Bad Request
   - If body is empty (no fields provided) → 400 Bad Request
   - If email already belongs to another organization → 409 Conflict
@@ -567,6 +574,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - 401 Unauthorized
     { "message": "No token provided." }
     { "message": "Invalid token." }
+    { "message": "Unauthorized Access." }
 
   - 404 Not Found
     { "message": "Organization not found." }
@@ -599,11 +607,12 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Headers (required):
   Authorization: Bearer <token>
+  Required role: admin, developer
 
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
-  - If user role is not admin → 401 Unauthorized
+  - If user role is not admin or developer → 401 Unauthorized
   - If `id` is invalid (not a positive integer) → 400 Bad Request
   - If organization does not exist → 404 Not Found
   - If successful → 204 No Content
@@ -774,6 +783,7 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Headers (required):
   Authorization: Bearer <token>
+  Required role: admin, developer
 
 - Body (JSON):
   {
@@ -792,6 +802,7 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
+  - If user role is not admin or developer → 401 Unauthorized
   - If any required field is missing → 400 Bad Request
   - If organization does not exist → 404 Not Found
   - If successful → 201 Created with new event
@@ -812,6 +823,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - 401 Unauthorized
     { "message": "No token provided." }
     { "message": "Invalid token." }
+    { "message": "Unauthorized Access." }
 
   - 404 Not Found
     { "message": "Organization not found." }
@@ -840,6 +852,7 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Headers (required):
   Authorization: Bearer <token>
+  Required role: admin, developer
 
 - Body (JSON — all fields optional, at least one required):
   {
@@ -853,6 +866,7 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
+  - If user role is not admin or developer → 401 Unauthorized
   - If `id` is invalid (not a positive integer) → 400 Bad Request
   - If body is empty (no fields provided) → 400 Bad Request
   - If event does not exist → 404 Not Found
@@ -882,6 +896,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - 401 Unauthorized
     { "message": "No token provided." }
     { "message": "Invalid token." }
+    { "message": "Unauthorized Access." }
 
   - 404 Not Found
     { "message": "Event not found." }
@@ -911,10 +926,12 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Headers (required):
   Authorization: Bearer <token>
+  Required role: admin, developer
 
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
+  - If user role is not admin or developer → 401 Unauthorized
   - If `id` is invalid (not a positive integer) → 400 Bad Request
   - If event does not exist or is already deleted → 404 Not Found
   - If successful → 204 No Content
@@ -933,6 +950,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - 401 Unauthorized
     { "message": "No token provided." }
     { "message": "Invalid token." }
+    { "message": "Unauthorized Access." }
 
   - 404 Not Found
     { "message": "Event not found." }
@@ -1012,6 +1030,7 @@ This document lists the backend API endpoints currently implemented in the proje
     { "message": "Internal server error" }
 
 - Notes:
+  - Any authenticated user can register to an event — no role restriction
   - Registration stored in event_attendees join table — no user details duplicated
 
 ---
@@ -1118,6 +1137,7 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Notes:
   - Soft delete — sets deleted_at to NOW(), registration row is preserved
+  - Any authenticated user can cancel a registration — ownership check deferred to future iteration
   - Service checks user and event exist before attempting the update
   - Repository uses rowCount to detect if registration existed
 
@@ -1178,5 +1198,5 @@ This document lists the backend API endpoints currently implemented in the proje
 - Notes:
   - Open endpoint — no token required
   - Password is never returned in the response — toPublic() strips it
-  - Token payload contains only { id } — payload is public, never put sensitive data in it
+  - Token payload contains { id, role } — payload is public, never put sensitive data in it
   - Token expires after 24h

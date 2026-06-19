@@ -18,10 +18,10 @@ organizationsRouter.get('/:id', getOrganizationById);
 
 organizationsRouter.get('/:id/events', getAllEventsByOrganizationId);
 
-organizationsRouter.post('/', verifyToken, createOrganization);
+organizationsRouter.post('/', verifyToken, requireRole(['admin', 'developer']) ,createOrganization);
 
-organizationsRouter.patch('/:id', verifyToken, updateOrganization);
+organizationsRouter.patch('/:id', verifyToken, requireRole(['admin', 'developer']),updateOrganization);
 
-organizationsRouter.delete('/:id', verifyToken, requireRole(['admin']) ,deleteOrganization);
+organizationsRouter.delete('/:id', verifyToken, requireRole(['admin', 'developer']) ,deleteOrganization);
 
 export default organizationsRouter;
