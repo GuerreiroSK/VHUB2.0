@@ -103,7 +103,7 @@ export async function updateUser(req, res) {
 
     try {
 
-        const updatedUser = await updateUserService(userId, fields, req.userId);
+        const updatedUser = await updateUserService(userId, fields, req.userId, req.userRole);
 
         return res.status(200).json(updatedUser);
 
@@ -139,7 +139,7 @@ export async function deleteUser(req, res) {
 
     try {
 
-        await deleteUserService(userId, req.userId);
+        await deleteUserService(userId, req.userId, req.userRole);
 
         return res.status(204).send();
 

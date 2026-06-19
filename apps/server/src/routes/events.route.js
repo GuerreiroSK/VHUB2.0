@@ -3,6 +3,7 @@ import express from 'express';
 import { eventsWithOrganizations, getEvents, getEventById, createEvent, updateEvent, deleteEvent } from '../controllers/events.controller.js';
 import { registerToAnEvent, getAttendeesByEventId, cancelRegistration } from '../controllers/event_attendees.controller.js';
 import { verifyToken } from '../middleware/auth.middleware.js';
+import { requireRole } from '../middleware/role.middleware.js';
 
 const eventsRouter = express.Router();
 
@@ -12,11 +13,11 @@ eventsRouter.get('/', getEvents);
 
 eventsRouter.get('/:id', getEventById);
 
-eventsRouter.post('/', verifyToken, createEvent );
+eventsRouter.post('/', verifyToken, requireRole(['admin', 'developer']) ,createEvent );
 
-eventsRouter.patch('/:id', verifyToken, updateEvent);
+eventsRouter.patch('/:id', verifyToken, requireRole(['admin', 'developer']), updateEvent);
 
-eventsRouter.delete('/:id', verifyToken, deleteEvent);
+eventsRouter.delete('/:id', verifyToken, requireRole(['admin', 'developer']), deleteEvent);
 
 eventsRouter.post('/:id/attendees', verifyToken, registerToAnEvent);
 
