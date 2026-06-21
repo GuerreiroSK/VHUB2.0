@@ -38,6 +38,7 @@ Columns:
 - `created_at` (NOT NULL, default `now()`)
 - `deleted_at` (NULLABLE) — soft delete timestamp; NULL means active
 - `role` (NOT NULL, default `'volunteer'`) — user's permission level; assigned at registration, changeable by admin only
+  - values: `volunteer`, `org_owner`, `admin`, `developer`
 
 Constraints:
 - Primary key: `users.id`
@@ -55,12 +56,15 @@ Columns:
 - `email` (NOT NULL, UNIQUE)
 - `description` (NULLABLE)
 - `location` (NULLABLE)
+- `owner_id` (NULLABLE, FK) — references the user who owns this organization
 - `created_at` (NOT NULL, default `now()`)
 - `deleted_at` (NULLABLE) — soft delete timestamp; NULL means active
 
 Constraints:
 - Primary key: `organizations.id`
 - Unique: `organizations.email`
+- Foreign key: `organizations.owner_id → users.id`
+  - On delete: `RESTRICT` — cannot delete a user who still owns an organization
 
 ---
 
@@ -116,6 +120,17 @@ Enforced by:
 
 ---
 
+### Users → Organizations (1:1 ownership)
+
+- A user can own at most one organization
+- An organization has at most one owner
+- `owner_id` is nullable — organizations can exist without an assigned owner
+
+Enforced by:
+- `organizations.owner_id` foreign key referencing `users.id` with `ON DELETE RESTRICT`
+
+---
+
 ### Users → Events (M:N via event_attendees)
 
 - One user can attend many events
@@ -137,6 +152,7 @@ Enforced by:
 | Added `end_datetime` | `events` | Event scheduling |
 | Fixed FK constraint | `events` | `events_organizations_fk` was referencing `events.id` instead of `events.organization_id` |
 | Added `role` | `users` | Role column for permission levels; defaults to `'volunteer'` |
+| Added `owner_id` | `organizations` | FK to `users.id`; links an organization to its owner; `ON DELETE RESTRICT` |
 
 ---
 
@@ -146,3 +162,4 @@ The following concepts are intentionally not implemented yet:
 
 - Status fields (published/canceled/etc.)
 - Capacity limits
+- org_member join table — for multi-member organizations (deferred until org membership model is designed)

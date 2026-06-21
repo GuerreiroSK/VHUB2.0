@@ -340,7 +340,8 @@ This document lists the backend API endpoints currently implemented in the proje
         "name": "Help Org",
         "email": "help@org.com",
         "description": "We help people",
-        "location": "Lisbon"
+        "location": "Lisbon",
+        "ownerId": 4
       }
     ]
 
@@ -350,6 +351,7 @@ This document lists the backend API endpoints currently implemented in the proje
 - Notes:
   - No pagination yet — will be addressed in a future iteration
   - Returns empty array when no organizations exist — absence of data is not an error
+  - ownerId is null for organizations without an assigned owner
 
 ---
 
@@ -383,7 +385,8 @@ This document lists the backend API endpoints currently implemented in the proje
       "name": "Help Org",
       "email": "help@org.com",
       "description": "Community Support",
-      "location": "Lisbon"
+      "location": "Lisbon",
+      "ownerId": 4
     }
 
   - 400 Bad Request
@@ -494,7 +497,8 @@ This document lists the backend API endpoints currently implemented in the proje
       "name": "Help Org",
       "email": "help@org.com",
       "description": "Community Support",
-      "location": "Lisbon"
+      "location": "Lisbon",
+      "ownerId": 6
     }
 
   - 400 Bad Request
@@ -512,6 +516,7 @@ This document lists the backend API endpoints currently implemented in the proje
     { "message": "Internal server error." }
 
 - Notes:
+  - ownerId is automatically set from req.userId — the logged-in admin becomes the owner
   - Organizations don't authenticate directly
   - Controller validates required fields, service enforces email uniqueness
 
@@ -564,7 +569,8 @@ This document lists the backend API endpoints currently implemented in the proje
       "name": "Updated Org Name",
       "email": "help@org.com",
       "description": "Community Support",
-      "location": "Lisbon"
+      "location": "Lisbon",
+      "ownerId": 4
     }
 
   - 400 Bad Request
@@ -783,7 +789,7 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Headers (required):
   Authorization: Bearer <token>
-  Required role: admin, developer
+  Required role: admin, developer, org_owner
 
 - Body (JSON):
   {
@@ -802,9 +808,10 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
-  - If user role is not admin or developer → 401 Unauthorized
+  - If user role is not admin, developer, or org_owner → 401 Unauthorized
   - If any required field is missing → 400 Bad Request
   - If organization does not exist → 404 Not Found
+  - If org_owner tries to create an event for an org they don't own → 401 Unauthorized
   - If successful → 201 Created with new event
 
 - Response:
@@ -833,7 +840,9 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Notes:
   - Events must belong to an organization — organizationId is required
-  - Service checks organization exists before creating the event
+  - Service checks organization exists and verifies ownership before creating the event
+  - org_owner can only create events for their own organization — ownership check in service layer
+  - admin and developer bypass ownership check
 
 ---
 
@@ -852,7 +861,7 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Headers (required):
   Authorization: Bearer <token>
-  Required role: admin, developer
+  Required role: admin, developer, org_owner
 
 - Body (JSON — all fields optional, at least one required):
   {
@@ -866,10 +875,11 @@ This document lists the backend API endpoints currently implemented in the proje
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
-  - If user role is not admin or developer → 401 Unauthorized
+  - If user role is not admin, developer, or org_owner → 401 Unauthorized
   - If `id` is invalid (not a positive integer) → 400 Bad Request
   - If body is empty (no fields provided) → 400 Bad Request
   - If event does not exist → 404 Not Found
+  - If org_owner tries to update an event for an org they don't own → 401 Unauthorized
   - If successful → 200 OK with updated event
 
 - Example Requests:
@@ -907,7 +917,8 @@ This document lists the backend API endpoints currently implemented in the proje
 - Notes:
   - organizationId is not updatable — events cannot change organization ownership
   - start_datetime and end_datetime are sent as ISO 8601 strings
-  - PATCH used for partial updates — send only fields to change
+  - org_owner can only update events belonging to their own organization — ownership check in service layer
+  - admin and developer bypass ownership check
 
 ---
 
@@ -926,14 +937,15 @@ This document lists the backend API endpoints currently implemented in the proje
 
 - Headers (required):
   Authorization: Bearer <token>
-  Required role: admin, developer
+  Required role: admin, developer, org_owner
 
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
   - If token is invalid or expired → 401 Unauthorized
-  - If user role is not admin or developer → 401 Unauthorized
+  - If user role is not admin, developer, or org_owner → 401 Unauthorized
   - If `id` is invalid (not a positive integer) → 400 Bad Request
   - If event does not exist or is already deleted → 404 Not Found
+  - If org_owner tries to delete an event for an org they don't own → 401 Unauthorized
   - If successful → 204 No Content
 
 - Example Requests:
@@ -961,7 +973,8 @@ This document lists the backend API endpoints currently implemented in the proje
 - Notes:
   - Soft delete — sets deleted_at timestamp, data is preserved
   - Deleted events are excluded from all GET queries
-  - Hard delete not used — data retained for analytics and recovery
+  - org_owner can only delete events belonging to their own organization — ownership check in service layer
+  - admin and developer bypass ownership check
 
 ---
 

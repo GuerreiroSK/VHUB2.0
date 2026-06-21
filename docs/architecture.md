@@ -64,7 +64,8 @@ docs/migrations/
 ├── 002_fix_events_organizations_fk.sql
 ├── 003_add_soft_delete_to_users.sql
 ├── 004_add_event_attendees_table.sql
-└── 005_add_role_to_users.sql
+├── 005_add_role_to_users.sql
+└── 006_add_owner_id_to_organizations.sql
 
 
 ## Backend Layered Architecture
@@ -117,7 +118,8 @@ route → controller → service → repository → database → entity → serv
   - Sits between routes and controllers
   - Intercepts requests before they reach controllers
   - Verifies JWT tokens and attaches `req.userId` and `req.userRole`
-  - Returns 401 if token is missing or invalid — controller never runs
+  - Checks role permissions via `requireRole(roles)` factory
+  - Returns 401 if token is missing, invalid, or role is not permitted — controller never runs
 
 - **Database Module (`src/db`)**
  - Creates and exports a shared PostgreSQL connection pool
@@ -134,3 +136,4 @@ route → controller → service → repository → database → entity → serv
 
   - Notes:
     - Collection repository methods return arrays (possibly empty), while singular methods throw if no data is found.
+    - Ownership checks (org_owner event permissions, user self-edit) live in the service layer — they require DB queries and are domain decisions, not access control decisions.
