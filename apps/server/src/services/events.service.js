@@ -1,3 +1,5 @@
+import UnauthorizedError from '../errors/UnauthorizedError.js';
+
 import { getAllEvents, 
     getEventsByOrganizationId, 
     getEventById as getEventByIdRepo,
@@ -70,25 +72,56 @@ export async function listEventsPaginated({page, limit, organizationId}) {
     }
 }
 
-export async function createEvent(eventName, location, email, organizationId, startDateTime, endDateTime) {
+export async function createEvent(eventName, location, email, organizationId, startDateTime, endDateTime, requestingUserId, requestingUserRole) {
 
-    await getOrganizationByIdRepo(organizationId);
+    const orgId = await getOrganizationByIdRepo(organizationId);
+
+    const ownerId = orgId.ownerId;
+
+    if (ownerId !== requestingUserId && !['admin', 'developer'].includes(requestingUserRole)) {
+
+        throw new UnauthorizedError('Unauthorized Access.');
+    }
 
     const newEvent = await createEventRepo(eventName, location, email, organizationId, startDateTime, endDateTime);
 
     return newEvent.toPublic();
 }
 
-export async function updateEvent(id, fields) {
+export async function updateEvent(id, fields, requestingUserId, requestingUserRole) {
 
-    await getEventByIdRepo(id);
+    const event = await getEventByIdRepo(id);
+    
+    const orgId = event.organizationId;
+
+    const orgOwnerId = await getOrganizationByIdRepo(orgId);
+
+    const ownerId = orgOwnerId.ownerId;
+
+    if (ownerId !== requestingUserId && !['admin', 'developer'].includes(requestingUserRole)) {
+
+        throw new UnauthorizedError('Unauthorized Access.');
+    }
 
     const updatedEvent = await updateEventRepo(id, fields);
 
     return updatedEvent.toPublic();
 }
 
-export async function deleteEvent(id) {
+export async function deleteEvent(id, requestingUserId, requestingUserRole) {
+
+    const event = await getEventByIdRepo(id);
+
+     const orgId = event.organizationId;
+
+    const orgOwnerId = await getOrganizationByIdRepo(orgId);
+
+    const ownerId = orgOwnerId.ownerId;
+
+    if (ownerId !== requestingUserId && !['admin', 'developer'].includes(requestingUserRole)) {
+
+        throw new UnauthorizedError('Unauthorized Access.');
+    }
 
     await deleteEventRepo(id);
 }

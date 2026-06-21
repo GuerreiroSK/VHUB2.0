@@ -7,6 +7,7 @@ import { getEventsWithOrganizations,
     } from '../services/events.service.js';
 
 import NotFoundError from '../errors/NotFoundError.js';
+import UnauthorizedError from '../errors/UnauthorizedError.js';
 
 export async function getEventById (req, res) {
 
@@ -110,7 +111,7 @@ export async function createEvent(req, res) {
 
     try {
 
-        const createdEvent = await createEventService(eventName, location, email, organizationId, startDateTime, endDateTime);
+        const createdEvent = await createEventService(eventName, location, email, organizationId, startDateTime, endDateTime, req.userId, req.userRole);
 
         return res.status(201).json(createdEvent);
 
@@ -119,6 +120,11 @@ export async function createEvent(req, res) {
         if (err instanceof NotFoundError) {
 
             return res.status(404).json({ message: err.message });
+        }
+
+        if (err instanceof UnauthorizedError) {
+
+            return res.status(401).json({ message: err.message});
         }
 
         return res.status(500).json({ message: 'Internal server error' });
@@ -151,7 +157,7 @@ export async function updateEvent(req, res) {
 
     try {
 
-        const updatedEvent = await updateEventService(eventId, fields);
+        const updatedEvent = await updateEventService(eventId, fields, req.userId, req.userRole);
 
         return res.status(200).json(updatedEvent);
 
@@ -160,6 +166,11 @@ export async function updateEvent(req, res) {
         if (err instanceof NotFoundError) {
 
             return res.status(404).json({ message: 'Event not found' });
+        }
+
+        if (err instanceof UnauthorizedError) {
+
+            return res.status(401).json({ message: err.message});
         }
 
         return res.status(500).json({ message: 'Internal server error' });
@@ -177,7 +188,7 @@ export async function deleteEvent(req, res) {
 
     try {
 
-        await deleteEventService(eventId);
+        await deleteEventService(eventId, req.userId, req.userRole);
         
         return res.status(204).send();
 
@@ -187,7 +198,12 @@ export async function deleteEvent(req, res) {
 
             return res.status(404).json({ message: err.message});
 
-        } 
+        }
+        
+        if (err instanceof UnauthorizedError) {
+
+            return res.status(401).json({ message: err.message});
+        }
 
         return res.status(500).json({ message: 'Internal server error'});
     }

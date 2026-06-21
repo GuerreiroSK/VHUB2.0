@@ -61,10 +61,10 @@ Remove `AND deleted_at IS NULL` from `getOrganizationByEmail` — email uniquene
 
 ---
 
-## Seed Script Calls Service Layer, Not RepositoryDecision
+## Seed Script Calls Service Layer, Not Repository
 
 **Decision**
-- The seed script imports and calls service functions (createUser, createOrganization, etc.) directly — never repository functions.
+The seed script imports and calls service functions (`createUser`, `createOrganization`, etc.) directly — never repository functions.
 
 **Why**
 - Repository functions have no business logic — they just run SQL and return entities
@@ -77,7 +77,7 @@ Remove `AND deleted_at IS NULL` from `getOrganizationByEmail` — email uniquene
 - Negligible for a dev tool with a small dataset
 
 **Result**
-- seed.js imports from services/ only
+- `seed.js` imports from `services/` only
 - Repository functions are never called directly from the script
 
 ---
@@ -85,20 +85,20 @@ Remove `AND deleted_at IS NULL` from `getOrganizationByEmail` — email uniquene
 ## TRUNCATE + RESTART IDENTITY Instead of DELETE for Database Reset
 
 **Decision**
-- The seed script clears all tables using a single TRUNCATE TABLE event_attendees, events, organizations, users RESTART IDENTITY CASCADE statement instead of DELETE FROM.
+The seed script clears all tables using a single `TRUNCATE TABLE event_attendees, events, organizations, users RESTART IDENTITY CASCADE` statement instead of `DELETE FROM`.
 
 **Why**
-- DELETE removes rows but leaves the auto-increment sequence at its last value — the next insert gets id = 6 (or whatever it was at), not id = 1
-- RESTART IDENTITY resets all sequences back to 1, so every run of the script produces the same predictable IDs
-- Predictable IDs are the whole point of the script — Postman collections that use /api/users/1 stay valid after every reseed
-- Listing all four tables in one TRUNCATE statement lets Postgres resolve FK dependencies atomically — no need to worry about truncation order
+- `DELETE` removes rows but leaves the auto-increment sequence at its last value — the next insert gets `id = 6` (or whatever it was at), not `id = 1`
+- `RESTART IDENTITY` resets all sequences back to 1, so every run of the script produces the same predictable IDs
+- Predictable IDs are the whole point of the script — Postman collections that use `/api/users/1` stay valid after every reseed
+- Listing all four tables in one `TRUNCATE` statement lets Postgres resolve FK dependencies atomically — no need to worry about truncation order
 
 **Trade-off**
-- TRUNCATE is more destructive than DELETE — no WHERE clause, no partial clears
-- CASCADE could silently wipe tables added later if they have FK references to our tables — acceptable for a dev tool, never for production
+- `TRUNCATE` is more destructive than `DELETE` — no `WHERE` clause, no partial clears
+- `CASCADE` could silently wipe tables added later if they have FK references to our tables — acceptable for a dev tool, never for production
 
 **Result**
-- One TRUNCATE statement covers all four tables in one atomic operation
+- One `TRUNCATE` statement covers all four tables in one atomic operation
 - Sequences reset to 1 on every run
 - Postman collections remain valid after every reseed
 
@@ -107,22 +107,22 @@ Remove `AND deleted_at IS NULL` from `getOrganizationByEmail` — email uniquene
 ## ESM Module Hoisting Prevents dotenv From Running Inside seed.js
 
 **Decision**
-- The seed script does not call dotenv.config() internally. Environment variables are loaded via Node's --env-file flag at runtime, exposed as "seed": "node --env-file=.env src/scripts/seed.js" in package.json.
+The seed script does not call `dotenv.config()` internally. Environment variables are loaded via Node's `--env-file` flag at runtime, exposed as `"seed": "node --env-file=.env src/scripts/seed.js"` in `package.json`.
 
 **Why**
-- In ESM (import/export), all import statements are hoisted and resolved before any code executes
-- Even if dotenv.config() is written at the top of seed.js, all imports (including db/index.js) run before dotenv has a chance to populate process.env
-- db/index.js throws immediately if any DB_* variable is missing — so the script crashes before a single line of seed logic runs
-- --env-file is handled by Node itself before the module system starts, so environment variables are available from the very first import
+- In ESM (`import`/`export`), all `import` statements are hoisted and resolved before any code executes
+- Even if `dotenv.config()` is written at the top of `seed.js`, all imports (including `db/index.js`) run before dotenv has a chance to populate `process.env`
+- `db/index.js` throws immediately if any `DB_*` variable is missing — so the script crashes before a single line of seed logic runs
+- `--env-file` is handled by Node itself before the module system starts, so environment variables are available from the very first import
 
 **Trade-off**
-- The script must always be run with --env-file — node src/scripts/seed.js alone will fail
-- Mitigated by the npm run seed script in package.json which handles the flag automatically
+- The script must always be run with `--env-file` — `node src/scripts/seed.js` alone will fail
+- Mitigated by the `npm run seed` script in `package.json` which handles the flag automatically
 
 **Result**
-- seed.js has no dotenv import — cleaner file, no false sense of security
-- package.json "seed" script handles the flag: node --env-file=.env src/scripts/seed.js
-- Run via npm run seed from inside apps/server/
+- `seed.js` has no dotenv import — cleaner file, no false sense of security
+- `package.json` `"seed"` script handles the flag: `node --env-file=.env src/scripts/seed.js`
+- Run via `npm run seed` from inside `apps/server/`
 
 ---
 
@@ -216,7 +216,7 @@ The user's role is included in the JWT payload (`{ id, role }`) at login and rea
 ## Raw SQL for Role Assignment in Seed Script
 
 **Decision**
-Role assignment for admin and developer users in `seed.js` is done via raw `db_pool.query()` after user creation, not through the service layer.
+Role assignment for admin, developer, and org_owner users in `seed.js` is done via raw `db_pool.query()` after user creation, not through the service layer.
 
 **Why**
 - `createUser` service intentionally does not accept a `role` parameter — users cannot set their own role
@@ -228,7 +228,7 @@ Role assignment for admin and developer users in `seed.js` is done via raw `db_p
 - Direct DB call in the seed — acceptable for a dev tool, never for production code
 
 **Result**
-- `seed.js` calls `createUser` for all users, then raw SQL to set `'admin'` and `'developer'` roles on specific users by email
+- `seed.js` calls `createUser` for all users, then raw SQL to set `'admin'`, `'developer'`, and `'org_owner'` roles on specific users by email
 
 ---
 
@@ -270,3 +270,49 @@ The ownership checks in `updateUser` and `deleteUser` services are bypassed when
 **Result**
 - `deleteUser(id, requestingUserId, requestingUserRole)` and `updateUser(id, fields, requestingUserId, requestingUserRole)` check: if `id !== requestingUserId` AND role is not admin or developer → throw `UnauthorizedError`
 - Admins and developers can update or delete any user account
+
+---
+
+## owner_id on Organizations — User-Organization Ownership
+
+**Decision**
+A new `owner_id` column was added to the `organizations` table as a foreign key referencing `users.id`. Ownership is stored directly on the organization, not in a separate join table.
+
+**Why**
+- A user can own at most one organization — a join table would be over-engineering for a one-to-one relationship
+- Storing `owner_id` directly on `organizations` is simple, readable, and queryable without a JOIN
+- `ON DELETE RESTRICT` prevents deleting a user who still owns an organization — data integrity is enforced at the DB level
+
+**Trade-off**
+- If the ownership model grows (e.g. multiple owners, org members), this column alone won't be enough — a join table will be needed at that point
+- Acceptable for now — YAGNI
+
+**Result**
+- `owner_id INTEGER REFERENCES users(id) ON DELETE RESTRICT` added via migration `006_add_owner_id_to_organizations.sql`
+- `Organization` entity updated to include `ownerId` in constructor and `toPublic()`
+- All repository queries updated to SELECT and RETURNING `owner_id`
+- `createOrganization` controller sets `ownerId` from `req.userId` — the logged-in admin becomes the owner
+- Organizations 2-5 in seed have `owner_id = null` — intentional
+
+---
+
+## org_owner Ownership Checks on Event Write Operations
+
+**Decision**
+Users with the `org_owner` role can create, update, and delete events — but only for the organization they own. Ownership is verified in the service layer before any mutation.
+
+**Why**
+- `requireRole` middleware only checks if the user has the right role — it cannot check which org they own without a DB query
+- Ownership verification requires fetching the event and its organization from the DB — this is domain logic, not access control
+- The check belongs in the service layer, consistent with how user ownership checks work on `updateUser` and `deleteUser`
+
+**Trade-off**
+- Two extra DB calls on every org_owner event write (fetch event → fetch org) — negligible at this scale
+- admin and developer bypass the ownership check entirely — they can manage any event
+
+**Result**
+- `createEvent`, `updateEvent`, `deleteEvent` in `events.service.js` now accept `requestingUserId` and `requestingUserRole`
+- Ownership check: fetch org via `organizationId`, compare `org.ownerId` to `requestingUserId`
+- If mismatch and role is not admin/developer → throw `UnauthorizedError`
+- `org_owner` added to `requireRole` on event write routes
+- Controllers pass `req.userId` and `req.userRole` to service functions

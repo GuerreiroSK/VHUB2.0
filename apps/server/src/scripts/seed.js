@@ -33,21 +33,23 @@ await db_pool.query("UPDATE users SET role = 'admin' WHERE email = 'admin@email.
 
 await db_pool.query("UPDATE users SET role = 'developer' WHERE email = 'developer@email.com'");
 
+await db_pool.query("UPDATE users SET role = 'org_owner' WHERE email = 'user4@email.com'");
+
 console.log('✅ Users created:', createdUsers.length);
 
 const orgsData = [
-    { name: 'Org1', email: 'org1@email.com', description: 'Organization 1', location: 'Lisboa'},
-    { name: 'Org2', email: 'org2@email.com', description: 'Organization 2', location: 'Porto'},
-    { name: 'Org3', email: 'org3@email.com', description: 'Organization 3', location: 'Sesimbra'},
-    { name: 'Org4', email: 'org4@email.com', description: 'Organization 4', location: 'Setúbal'},
-    { name: 'Org5', email: 'org5@email.com', description: 'Organization 5', location: 'Lagos'}
+    { name: 'Org1', email: 'org1@email.com', description: 'Organization 1', location: 'Lisboa', ownerId: createdUsers[3].id},
+    { name: 'Org2', email: 'org2@email.com', description: 'Organization 2', location: 'Porto', ownerId: null},
+    { name: 'Org3', email: 'org3@email.com', description: 'Organization 3', location: 'Sesimbra', ownerId: null},
+    { name: 'Org4', email: 'org4@email.com', description: 'Organization 4', location: 'Setúbal', ownerId: null},
+    { name: 'Org5', email: 'org5@email.com', description: 'Organization 5', location: 'Lagos', ownerId: null}
 ];
 
 const createdOrgs = [];
 
 for (const newEntry of orgsData) {
 
-    const newOrg = await createOrganization(newEntry.name, newEntry.email, newEntry.description, newEntry.location);
+    const newOrg = await createOrganization(newEntry.name, newEntry.email, newEntry.description, newEntry.location, newEntry.ownerId);
 
     createdOrgs.push(newOrg);
 };
@@ -72,7 +74,9 @@ for (let i = 0; i < eventsData.length; i++) {
         eventsData[i].email,
         createdOrgs[i].id,
         eventsData[i].startDateTime,
-        eventsData[i].endDateTime
+        eventsData[i].endDateTime,
+        createdUsers[3].id,
+        'admin'
     )
 
     createdEvents.push(newEvent);

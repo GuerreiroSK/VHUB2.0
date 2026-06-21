@@ -81,6 +81,8 @@ export async function createOrganization(req, res) {
 
     const { name, email, description, location } = req.body;
 
+    const ownerId = req.userId;
+
     if (!name || !email || !location) {
 
         return res.status(400).json({ message: 'Name, Email and Location fields cannot be empty' });
@@ -88,7 +90,7 @@ export async function createOrganization(req, res) {
 
     try {
 
-        const createdOrganzation = await createOrganizationService(name, email, description, location);
+        const createdOrganzation = await createOrganizationService(name, email, description, location, ownerId);
 
         return res.status(201).json(createdOrganzation);
 

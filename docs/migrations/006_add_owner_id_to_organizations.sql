@@ -1,0 +1,1 @@
+ALTER TABLE organizations ADD COLUMN owner_id INTEGER REFERENCES users(id) ON DELETE RESTRICT;

@@ -13,11 +13,11 @@ eventsRouter.get('/', getEvents);
 
 eventsRouter.get('/:id', getEventById);
 
-eventsRouter.post('/', verifyToken, requireRole(['admin', 'developer']) ,createEvent );
+eventsRouter.post('/', verifyToken, requireRole(['org_owner', 'admin', 'developer']) ,createEvent );
 
-eventsRouter.patch('/:id', verifyToken, requireRole(['admin', 'developer']), updateEvent);
+eventsRouter.patch('/:id', verifyToken, requireRole(['org_owner', 'admin', 'developer']), updateEvent);
 
-eventsRouter.delete('/:id', verifyToken, requireRole(['admin', 'developer']), deleteEvent);
+eventsRouter.delete('/:id', verifyToken, requireRole(['org_owner', 'admin', 'developer']), deleteEvent);
 
 eventsRouter.post('/:id/attendees', verifyToken, registerToAnEvent);
 

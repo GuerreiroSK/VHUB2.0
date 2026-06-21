@@ -33,7 +33,7 @@ export async function getOrganizationById(id) {
     return organization.toPublic();
 }
 
-export async function createOrganization(name, email, description, location) {
+export async function createOrganization(name, email, description, location, ownerId) {
 
     const checkEmail = await getOrganizationByEmail(email);
 
@@ -43,7 +43,7 @@ export async function createOrganization(name, email, description, location) {
 
     }
 
-    const createdOrganization = await createOrganizationRepo(name, email, description, location);
+    const createdOrganization = await createOrganizationRepo(name, email, description, location, ownerId);
 
     return createdOrganization.toPublic();
 }

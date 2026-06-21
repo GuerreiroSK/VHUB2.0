@@ -5,7 +5,7 @@ import NotFoundError from "../errors/NotFoundError.js";
 export async function getOrganizationById(id) {
 
     const result = await db_pool.query(
-        'SELECT id, name, email, description, location FROM organizations WHERE id = $1 AND deleted_at IS NULL',
+        'SELECT id, name, email, description, location, owner_id FROM organizations WHERE id = $1 AND deleted_at IS NULL',
         [id]
     );
 
@@ -20,14 +20,15 @@ export async function getOrganizationById(id) {
         row.name,
         row.email,
         row.description,
-        row.location
+        row.location,
+        row.owner_id
     );
 }
 
 export async function getAllOrganizations() {
 
     const result = await db_pool.query(
-        'SELECT id, name, email, description, location FROM organizations WHERE deleted_at IS NULL'
+        'SELECT id, name, email, description, location, owner_id FROM organizations WHERE deleted_at IS NULL'
     );
 
     const rows = result.rows;
@@ -43,7 +44,8 @@ export async function getAllOrganizations() {
             row.name,
             row.email,
             row.description,
-            row.location
+            row.location,
+            row.owner_id
         )
     });
     
@@ -66,11 +68,11 @@ export async function getOrganizationByEmail(email) {
     return row;
 }
 
-export async function createOrganization(name, email, description, location) {
+export async function createOrganization(name, email, description, location, ownerId) {
 
     const result = await db_pool.query(
-        'INSERT INTO organizations (name, email, description, location) VALUES ($1 , $2, $3, $4) RETURNING id, name, email, description, location',
-        [name, email, description, location]
+        'INSERT INTO organizations (name, email, description, location, owner_id) VALUES ($1 , $2, $3, $4, $5) RETURNING id, name, email, description, location, owner_id',
+        [name, email, description, location, ownerId]
     );
 
     const row = result.rows[0];
@@ -81,7 +83,8 @@ export async function createOrganization(name, email, description, location) {
             row.name,
             row.email,
             row.description,
-            row.location
+            row.location,
+            row.owner_id
         )
 
     return newOrganzation;
@@ -102,7 +105,7 @@ export async function updateOrganization(id, fields) {
     values.push(id);
 
     const result = await db_pool.query(
-        `UPDATE organizations SET ${setClauses.join(', ')} WHERE id = $${values.length} AND deleted_at IS NULL RETURNING id, name, email, description, location`,
+        `UPDATE organizations SET ${setClauses.join(', ')} WHERE id = $${values.length} AND deleted_at IS NULL RETURNING id, name, email, description, location, owner_id`,
         values
     );
 
@@ -117,7 +120,8 @@ export async function updateOrganization(id, fields) {
         row.name,
         row.email,
         row.description,
-        row.location
+        row.location,
+        row.owner_id
     );
 }
 
