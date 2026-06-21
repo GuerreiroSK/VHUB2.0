@@ -1,14 +1,20 @@
-import { useState } from 'react'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import EventsPage from './pages/EventsPage.tsx';
+import LoginPage from './pages/LoginPage';
+
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-     <h1 className="text-4xl font-bold text-purple-600">Tailwind is working!</h1>
-    </>
-  )
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<EventsPage />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </BrowserRouter>
+    )
 }
 
 export default App
