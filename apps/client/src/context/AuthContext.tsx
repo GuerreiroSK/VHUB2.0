@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 type User = {
     id: number
@@ -18,6 +18,13 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const [user, setUser] = useState<User | null>(null)
+
+    useEffect(() => {
+        const stored = localStorage.getItem('user')
+            if (stored) {
+                setUser(JSON.parse(stored))
+            }
+    }, []) 
 
     function login(userData: User) {
         setUser(userData)
