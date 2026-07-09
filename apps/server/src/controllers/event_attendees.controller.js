@@ -11,14 +11,9 @@ export async function registerToAnEvent(req, res) {
 
     const eventId = Number(req.params.id);
 
-    const userId = Number(req.body.userId);
+    const userId = req.userId;
 
     if (!Number.isInteger(eventId) || eventId <= 0 ) {
-
-        return res.status(400).json({ message: 'id must be a positive integer'});
-    }
-
-    if (!Number.isInteger(userId) || userId <= 0) {
 
         return res.status(400).json({ message: 'id must be a positive integer'});
     }
