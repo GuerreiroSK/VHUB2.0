@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage.tsx';
 import OrganizationsPage from './pages/OrganizationsPage.tsx';
 import HomePage from './pages/HomePage.tsx';
+import EventDetailPage from './pages/EventDetailPage.tsx';
 
 import './App.css';
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="/organizations" element={<OrganizationsPage />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/events/:id" element={<EventDetailPage />} />
           </Routes>
       </BrowserRouter>
     </AuthProvider>
