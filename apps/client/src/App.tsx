@@ -10,6 +10,7 @@ import HomePage from './pages/HomePage.tsx';
 import EventDetailPage from './pages/EventDetailPage.tsx';
 
 import './App.css';
+import OrganizationDetailPage from './pages/OrganizationDetailPage.tsx';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
             <Route path="/events" element={<EventsPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/events/:id" element={<EventDetailPage />} />
+            <Route path="/organizations/:id" element={<OrganizationDetailPage />} />
           </Routes>
       </BrowserRouter>
     </AuthProvider>

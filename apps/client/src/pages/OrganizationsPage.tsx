@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 type Organization = {
     id: number
@@ -26,12 +27,14 @@ function OrganizationsPage () {
         <>
             <h1>Organizations Page</h1>
               {organizations.map(organization => (
-                <div key={organization.id}>
-                    <h2>{organization.name}</h2>
-                    <p>{organization.email}</p>
-                    <p>{organization.description}</p>
-                    <p>{organization.location}</p>
-                </div>
+                <Link to = {`/organizations/${organization.id}`} key = {organization.id}>
+                    <div>
+                        <h2>{organization.name}</h2>
+                        <p>{organization.email}</p>
+                        <p>{organization.description}</p>
+                        <p>{organization.location}</p>
+                    </div>
+                </Link>
             ))}
         </>
     )
