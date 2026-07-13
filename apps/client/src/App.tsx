@@ -18,6 +18,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
+        <main className="max-w-7xl mx-auto px-6 py-8">
            <Routes>
             <Route path="/homepage" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -27,6 +28,7 @@ function App() {
             <Route path="/events/:id" element={<EventDetailPage />} />
             <Route path="/organizations/:id" element={<OrganizationDetailPage />} />
           </Routes>
+          </main>
       </BrowserRouter>
     </AuthProvider>
   )
