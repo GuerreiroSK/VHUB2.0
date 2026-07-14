@@ -33,8 +33,7 @@ function LoginPage() {
 
     return (
         <div className='flex h-screen'>
-            <div className='w-1/2 bg-orange-200'>
-            </div>
+            <div className='w-1/2 bg-orange-200' />
             <div className='w-1/2 flex items-center justify-center'>
                 <div className='flex flex-col gap-4 w-[600px]'>
                    <div className='flex items-center gap-4 mb-8'>
