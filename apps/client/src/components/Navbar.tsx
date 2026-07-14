@@ -18,13 +18,13 @@ function Navbar() {
                     <img src={name} alt="VHUB name" className='h-8' />
                 </div>
                 <div className='flex items-center gap-8 justify-end'>
-                    {user ? <span>{user.name}</span> : <Link to="/login">Sign in</Link>}
+                    {user ? <span>{user.name}</span> : <Link to="/login">Login</Link>}
                     {user ? <button onClick={logout}>Log out</button> : <Link to="/register" className='bg-orange-500 text-white px-4 py-2 rounded-full'>Register</Link>}
                 </div>
-                <svg className='absolute bottom-7 -left-5 w-6 h-6' viewBox="0 0 16 16">
+                <svg className='absolute bottom-9 -left-5 w-6 h-6' viewBox="0 0 16 16">
                     <path d="M0 0 C0 0 16 0 16 16 L16 0 Z" fill="white"/>
                 </svg>
-                <svg className='absolute bottom-7 -right-5 w-6 h-6' viewBox="0 0 16 16">
+                <svg className='absolute bottom-9 -right-5 w-6 h-6' viewBox="0 0 16 16">
                     <path d="M16 0 C16 0 0 0 0 16 L0 0 Z" fill="white"/>
                 </svg>
             </div>

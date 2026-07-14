@@ -16,25 +16,25 @@ function App() {
 
   return (
     
-      <AuthProvider>
-        <BrowserRouter>
-          <div className="fixed inset-0 z-40 pointer-events-none border-[12px] border-white rounded-2xl"></div>
-            <Navbar />
-              <div className="rounded-2xl overflow-hidden">
-                <main>
-                  <Routes>
-                    <Route path="/homepage" element={<HomePage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/organizations" element={<OrganizationsPage />} />
-                    <Route path="/events" element={<EventsPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/events/:id" element={<EventDetailPage />} />
-                    <Route path="/organizations/:id" element={<OrganizationDetailPage />} />
-                  </Routes>
-                </main>
-              </div>   
-        </BrowserRouter>
-      </AuthProvider>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="fixed inset-0 z-40 pointer-events-none border-[12px] border-white rounded-2xl"></div>
+          <Navbar />
+            <div className="rounded-2xl overflow-hidden">
+              <main>
+                <Routes>
+                  <Route path="/homepage" element={<HomePage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/organizations" element={<OrganizationsPage />} />
+                  <Route path="/events" element={<EventsPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/events/:id" element={<EventDetailPage />} />
+                  <Route path="/organizations/:id" element={<OrganizationDetailPage />} />
+                </Routes>
+              </main>
+            </div>   
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
