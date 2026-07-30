@@ -55,13 +55,19 @@ function EventDetailPage() {
     return (
 
         <div>
-            <h1>{eventDetails.eventName}</h1>
-            <p>{eventDetails.location}</p>
-            <p>{eventDetails.startDateTime}</p>
-            <p>{eventDetails.endDateTime}</p>
-            <p>{eventDetails.email}</p>
-            <button onClick={handleRegisterMessage}>Register</button>
-            {warningMessage && <p>{warningMessage}</p>}
+            <div className="w-full h-screen flex items-start bg-orange-500 justify-center p-48">
+                <h1 className="text-white font-bold tracking-normal text-7xl">{eventDetails.eventName}</h1>
+            </div>
+            <div className="flex items-center flex-col bg-orange-200 text-black text-xl justify-center p-4">
+                <p>{eventDetails.location}</p>
+                <p>Starts: {new Date(eventDetails.startDateTime).toLocaleString()}</p>
+                <p>Ends: {new Date(eventDetails.endDateTime).toLocaleString()}</p>
+                <p>{eventDetails.email}</p>
+            </div>
+            <button onClick={handleRegisterMessage} 
+                className = "fixed bottom-8 right-8 bg-white/20 backdrop-blur-sm border border-white/30 text-black px-6 py-3 rounded-full shadow-lg z-50 drop-shadow-lg">
+                    Register to this event!
+            </button> {warningMessage && <p>{warningMessage}</p>}
         </div>
     )
 }
