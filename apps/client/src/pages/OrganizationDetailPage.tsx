@@ -47,24 +47,34 @@ function OrganizationDetailPage() {
     return (
 
         <div>
-            <h1>{organizationDetails.name}</h1>
-            <p>{organizationDetails.location}</p>
-            <p>{organizationDetails.createdAt}</p>
-            <p>{organizationDetails.description}</p>
-            <p>{organizationDetails.email}</p>
-
-            <h2>Our events!</h2>
-            {events.map(event => (
-                <Link to={`/events/${event.id}`} key = {event.id}>
-                    <div>
-                        <h3>{event.eventName}</h3>
-                        <p>{event.location}</p>
-                        <p>{event.startDateTime}</p>
-                        <p>{event.endDateTime}</p>
-                    </div>
-                </Link>
-            ))}
+            <div className="w-full h-screen flex items-start bg-orange-500 justify-center p-48">
+                <h1 className="text-white font-bold tracking-normal text-7xl">{organizationDetails.name}</h1>
+            </div>
+            <div className="flex items-center flex-col bg-orange-200 text-black text-xl justify-center p-4">
+                <p>{organizationDetails.description}</p>
+                <p>{organizationDetails.location}</p>
+                <p>{organizationDetails.email}</p>
+            </div>
+            <div>
+                <h2 className="p-4 text-2xl font-bold font-serif border-b border-gray-300 pb-2 mb-2 text-center bg-orange-700 text-white">Our events!</h2>
+                <div className="grid grid-cols-5 gap-4 px-16">
+                    {events.map(event => (
+                        <div key = {event.id} className='relative rounded-3xl overflow-hidden h-96 bg-orange-400'>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent p-4 text-white flex flex-col justify-end">
+                                <h3>{event.eventName}</h3>
+                                <p>{event.location}</p>
+                                <p>{event.startDateTime}</p>
+                                <p>{event.endDateTime}</p>
+                                <div className='flex justify-center'>
+                                    <Link to={`/events/${event.id}`} className='bg-orange-400 text-white inline-block rounded-3xl py-2 text-center mt-2 px-4'>Event details</Link>
+                                </div>    
+                            </div>
+                        </div>
+                    ))}
+                </div>    
+            </div>
         </div>
+     
     )
 }
 
