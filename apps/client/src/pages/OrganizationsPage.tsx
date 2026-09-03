@@ -36,11 +36,11 @@ function OrganizationsPage () {
                             <p className='mb-6'>{organization.description}</p>
                             <div className='flex justify-center'>
                                 <Link to={`/organizations/${organization.id}`} className='bg-orange-400 text-white inline-block rounded-3xl py-2 text-center mt-2 px-4'>Organization details</Link>
-                            </div>    
+                            </div>
                         </div>
                     </div>
                 ))}
-            </div>  
+            </div>
         </div>
     )
 }
