@@ -1,9 +1,10 @@
+import Carousel from "../components/Carousel"
 function HomePage () {
 
     return(
-        <>
-            <h1>Home Page</h1>
-        </>
+        <div className="relative">
+            <Carousel />
+        </div>
     )
 }
 
