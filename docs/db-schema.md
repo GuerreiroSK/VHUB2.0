@@ -82,6 +82,7 @@ Columns:
 - `end_datetime` (NULLABLE) — event end date and time
 - `created_at` (NOT NULL, default `now()`)
 - `deleted_at` (NULLABLE) — soft delete timestamp; NULL means active
+- `description` (NOT NULL, default `''`) — free-form event description; empty string when none provided
 
 Constraints:
 - Primary key: `events.id`
@@ -153,6 +154,7 @@ Enforced by:
 | Fixed FK constraint | `events` | `events_organizations_fk` was referencing `events.id` instead of `events.organization_id` |
 | Added `role` | `users` | Role column for permission levels; defaults to `'volunteer'` |
 | Added `owner_id` | `organizations` | FK to `users.id`; links an organization to its owner; `ON DELETE RESTRICT` |
+| Added `description` | `events` | Free-form description column; `NOT NULL DEFAULT ''` so existing rows survive the migration |
 
 ---
 

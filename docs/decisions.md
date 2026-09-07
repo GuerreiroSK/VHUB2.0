@@ -316,3 +316,22 @@ Users with the `org_owner` role can create, update, and delete events — but on
 - If mismatch and role is not admin/developer → throw `UnauthorizedError`
 - `org_owner` added to `requireRole` on event write routes
 - Controllers pass `req.userId` and `req.userRole` to service functions
+
+---
+
+## Events `description` — NOT NULL with empty-string default
+
+**Decision**
+Added a `description` column to `events` as `varchar NOT NULL DEFAULT ''`. The field is optional at the API level — if a create request omits it, the repository passes `description || ''`.
+
+**Why**
+An event description is a nice-to-have, not a hard requirement — an event can exist before its description is written. Making the column `NOT NULL DEFAULT ''` lets existing rows survive the migration without a manual backfill (Postgres fills every existing row with `''` at ALTER time), and lets the frontend treat description as always-a-string, never null — no `description ?? ''` guards needed anywhere in React.
+
+**Trade-off**
+We gave up the ability to distinguish "no description was ever set" (`NULL`) from "a blank description was deliberately entered" (`''`). `NULL` would carry that distinction more precisely, but at the cost of null-guarding every read on the frontend. We chose simplicity over that precision. Kept `varchar` (not `text`) to stay consistent with `name`/`location` on the same table.
+
+**Result**
+`events.description` exists across the full stack — DB column, `Event` entity (constructor + `toPublic()`), all six read/write repository functions, `createEvent` service, and both `createEvent`/`updateEvent` controllers. Create treats it as optional (`|| ''` fallback); update handles it through the existing dynamic `fields` builder.
+
+---
+
