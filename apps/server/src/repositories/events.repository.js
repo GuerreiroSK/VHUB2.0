@@ -5,7 +5,7 @@ import NotFoundError from '../errors/NotFoundError.js';
 export async function getEventById(id) {
 
     const result = await db_pool.query(
-        'SELECT id, name, location, organization_id, email, start_datetime, end_datetime FROM events WHERE id = $1 AND deleted_at IS NULL',
+        'SELECT id, name, location, organization_id, email, start_datetime, end_datetime, description FROM events WHERE id = $1 AND deleted_at IS NULL',
         [id]
     )
 
@@ -22,7 +22,8 @@ export async function getEventById(id) {
         row.organization_id,
         row.email,
         row.start_datetime,
-        row.end_datetime
+        row.end_datetime,
+        row.description
     );
 
     return event;
@@ -34,12 +35,12 @@ export async function getAllEvents(limit, offset) {
 
     if (limit === undefined || offset === undefined) {
         result = await db_pool.query(
-            'SELECT id, name, location, organization_id, email, start_datetime, end_datetime FROM events WHERE deleted_at IS NULL ORDER BY id'
+            'SELECT id, name, location, organization_id, email, start_datetime, end_datetime, description FROM events WHERE deleted_at IS NULL ORDER BY id'
         );
     } else {
 
         result = await db_pool.query(
-            'SELECT id, name, location, organization_id, email, start_datetime, end_datetime FROM events WHERE deleted_at IS NULL ORDER BY id LIMIT $1 OFFSET $2',
+            'SELECT id, name, location, organization_id, email, start_datetime, end_datetime, description FROM events WHERE deleted_at IS NULL ORDER BY id LIMIT $1 OFFSET $2',
             [limit, offset]
         )
     }
@@ -59,7 +60,8 @@ export async function getAllEvents(limit, offset) {
             row.organization_id,
             row.email,
             row.start_datetime,
-            row.end_datetime
+            row.end_datetime,
+            row.description
         )
     })
 
@@ -69,7 +71,7 @@ export async function getAllEvents(limit, offset) {
 export async function getAllEventsByOrganizationId(id) {
 
     const result = await db_pool.query(
-        'SELECT id, name, location, organization_id, email, start_datetime, end_datetime FROM events WHERE organization_id = $1 AND deleted_at IS NULL',
+        'SELECT id, name, location, organization_id, email, start_datetime, end_datetime, description FROM events WHERE organization_id = $1 AND deleted_at IS NULL',
         [id]
     );
 
@@ -80,7 +82,8 @@ export async function getAllEventsByOrganizationId(id) {
         row.organization_id,
         row.email,
         row.start_datetime,
-        row.end_datetime
+        row.end_datetime,
+        row.description
     ))
 
     return allEventsMap;
@@ -93,14 +96,14 @@ export async function getEventsByOrganizationId(organizationId, limit, offset) {
     if (limit === undefined || offset === undefined) {
 
         result = await db_pool.query(
-            'SELECT id, name, location, organization_id, email, start_datetime, end_datetime FROM events WHERE deleted_at IS NULL AND organization_id = $1 ORDER BY id',
+            'SELECT id, name, location, organization_id, email, start_datetime, end_datetime, description FROM events WHERE deleted_at IS NULL AND organization_id = $1 ORDER BY id',
             [organizationId]
         );
 
     } else {
 
         result = await db_pool.query(
-            'SELECT id, name, location, organization_id, email, start_datetime, end_datetime FROM events WHERE deleted_at IS NULL AND organization_id = $1 ORDER BY id LIMIT $2 OFFSET $3',
+            'SELECT id, name, location, organization_id, email, start_datetime, end_datetime, description FROM events WHERE deleted_at IS NULL AND organization_id = $1 ORDER BY id LIMIT $2 OFFSET $3',
             [organizationId, limit, offset]
         );
     }
@@ -112,17 +115,18 @@ export async function getEventsByOrganizationId(organizationId, limit, offset) {
         row.organization_id,
         row.email,
         row.start_datetime,
-        row.end_datetime
+        row.end_datetime,
+        row.description
     ))
 
     return eventsMap;
 }
 
-export async function createEvent(eventName, location, email, organizationId, startDateTime, endDateTime) {
+export async function createEvent(eventName, location, email, organizationId, startDateTime, endDateTime, description) {
 
     const result = await db_pool.query(
-        'INSERT INTO events (name, location, email, organization_id, start_datetime, end_datetime) VALUES ($1 , $2, $3, $4, $5, $6) RETURNING id, name, location, email, organization_id, start_datetime, end_datetime',
-        [eventName, location, email, organizationId, startDateTime || null, endDateTime || null]
+        'INSERT INTO events (name, location, email, organization_id, start_datetime, end_datetime, description) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, location, email, organization_id, start_datetime, end_datetime, description',
+        [eventName, location, email, organizationId, startDateTime || null, endDateTime || null, description || '']
     );
 
     const row = result.rows[0];
@@ -134,7 +138,8 @@ export async function createEvent(eventName, location, email, organizationId, st
         row.organization_id,
         row.email,
         row.start_datetime,
-        row.end_datetime
+        row.end_datetime,
+        row.description
     );
 
     return newEvent;
@@ -154,7 +159,7 @@ export async function updateEvent(id, fields) {
     values.push(id);
 
     const result = await db_pool.query(
-        `UPDATE events SET ${setClauses.join(', ')} WHERE id = $${values.length} AND deleted_at IS NULL RETURNING id, name, location, organization_id, email, start_datetime, end_datetime`,
+        `UPDATE events SET ${setClauses.join(', ')} WHERE id = $${values.length} AND deleted_at IS NULL RETURNING id, name, location, organization_id, email, start_datetime, end_datetime, description`,
         values
     );
 
@@ -171,7 +176,8 @@ export async function updateEvent(id, fields) {
         row.organization_id,
         row.email,
         row.start_datetime,
-        row.end_datetime
+        row.end_datetime,
+        row.description
     );
 }
 

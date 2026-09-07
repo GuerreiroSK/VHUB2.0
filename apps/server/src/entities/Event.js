@@ -1,12 +1,13 @@
 class Event {
-    constructor(id, eventName, location, organizationId, email, startDateTime, endDateTime) {
+    constructor(id, eventName, location, organizationId, email, startDateTime, endDateTime, description) {
         this.id = id
         this.eventName = eventName
-        this.location = location, 
+        this.location = location
         this.organizationId = organizationId
         this.email = email
         this.startDateTime = startDateTime
         this.endDateTime = endDateTime
+        this.description = description
     }
     toPublic() {
         return {
@@ -16,7 +17,8 @@ class Event {
             organizationId: this.organizationId,
             email: this.email,
             startDateTime: this.startDateTime,
-            endDateTime: this.endDateTime
+            endDateTime: this.endDateTime,
+            description: this.description
         }
     }
 }

@@ -102,7 +102,7 @@ export async function getEvents(req, res) {
 
 export async function createEvent(req, res) {
 
-    const { eventName, location, email, organizationId, startDateTime, endDateTime } = req.body;
+    const { eventName, location, email, organizationId, startDateTime, endDateTime, description } = req.body;
 
     if (!eventName || !location || !email || !organizationId) {
 
@@ -111,7 +111,7 @@ export async function createEvent(req, res) {
 
     try {
 
-        const createdEvent = await createEventService(eventName, location, email, organizationId, startDateTime, endDateTime, req.userId, req.userRole);
+        const createdEvent = await createEventService(eventName, location, email, organizationId, startDateTime, endDateTime, description, req.userId, req.userRole);
 
         return res.status(201).json(createdEvent);
 
@@ -135,7 +135,7 @@ export async function updateEvent(req, res) {
 
     const eventId = Number(req.params.id);
 
-    const { name, location, email, start_datetime, end_datetime} = req.body;
+    const { name, location, email, start_datetime, end_datetime, description} = req.body;
 
     const fields = {};
 
@@ -144,6 +144,7 @@ export async function updateEvent(req, res) {
     if (location) fields.location = location;
     if (start_datetime) fields.start_datetime = start_datetime;
     if (end_datetime) fields.end_datetime = end_datetime;
+    if (description) fields.description = description;
 
     if (!Number.isInteger(eventId) || eventId <= 0) {
 

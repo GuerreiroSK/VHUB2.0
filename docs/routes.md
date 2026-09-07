@@ -796,7 +796,10 @@ This document lists the backend API endpoints currently implemented in the proje
     "eventName": "Beach Cleanup",
     "location": "Carcavelos",
     "email": "event@help.com",
-    "organizationId": 1
+    "organizationId": 1,
+    "startDateTime": "2026-07-15T09:00:00",
+    "endDateTime": "2026-07-15T12:00:00",
+    "description": "A morning cleaning the beach together"
   }
 
 - Required Fields:
@@ -804,6 +807,11 @@ This document lists the backend API endpoints currently implemented in the proje
   - location
   - email
   - organizationId
+
+- Optional Fields:
+  - startDateTime
+  - endDateTime
+  - description (free-form string — defaults to "" if omitted)
 
 - Behavior:
   - If Authorization header is missing → 401 Unauthorized
@@ -821,7 +829,10 @@ This document lists the backend API endpoints currently implemented in the proje
       "eventName": "Beach Cleanup",
       "location": "Carcavelos",
       "organizationId": 1,
-      "email": "event@help.com"
+      "email": "event@help.com",
+      "startDateTime": "2026-07-15T09:00:00.000Z",
+      "endDateTime": "2026-07-15T12:00:00.000Z",
+      "description": "A morning cleaning the beach together"
     }
 
   - 400 Bad Request
@@ -841,6 +852,8 @@ This document lists the backend API endpoints currently implemented in the proje
 - Notes:
   - Events must belong to an organization — organizationId is required
   - Service checks organization exists and verifies ownership before creating the event
+  - description is optional; when omitted the repository stores "" (empty string), never null
+  - startDateTime and endDateTime are optional — stored as null when omitted
   - org_owner can only create events for their own organization — ownership check in service layer
   - admin and developer bypass ownership check
 
@@ -869,7 +882,8 @@ This document lists the backend API endpoints currently implemented in the proje
     "location": "Porto",
     "email": "updated@event.com",
     "start_datetime": "2026-06-01T10:00:00",
-    "end_datetime": "2026-06-01T14:00:00"
+    "end_datetime": "2026-06-01T14:00:00",
+    "description": "Updated event description"
   }
 
 - Behavior:
@@ -896,7 +910,8 @@ This document lists the backend API endpoints currently implemented in the proje
       "organizationId": 2,
       "email": "event@help.com",
       "startDateTime": null,
-      "endDateTime": null
+      "endDateTime": null,
+      "description": "Updated event description"
     }
 
   - 400 Bad Request
@@ -919,6 +934,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - start_datetime and end_datetime are sent as ISO 8601 strings
   - org_owner can only update events belonging to their own organization — ownership check in service layer
   - admin and developer bypass ownership check
+  - description is optional and free-form; sending "" clears it
 
 ---
 

@@ -72,7 +72,7 @@ export async function listEventsPaginated({page, limit, organizationId}) {
     }
 }
 
-export async function createEvent(eventName, location, email, organizationId, startDateTime, endDateTime, requestingUserId, requestingUserRole) {
+export async function createEvent(eventName, location, email, organizationId, startDateTime, endDateTime, description, requestingUserId, requestingUserRole) {
 
     const orgId = await getOrganizationByIdRepo(organizationId);
 
@@ -83,7 +83,7 @@ export async function createEvent(eventName, location, email, organizationId, st
         throw new UnauthorizedError('Unauthorized Access.');
     }
 
-    const newEvent = await createEventRepo(eventName, location, email, organizationId, startDateTime, endDateTime);
+    const newEvent = await createEventRepo(eventName, location, email, organizationId, startDateTime, endDateTime, description);
 
     return newEvent.toPublic();
 }
