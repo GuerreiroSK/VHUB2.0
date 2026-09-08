@@ -18,7 +18,7 @@ export async function registerToAnEvent(userId, eventId) {
     const checkRegistration = await checkIfRegisteredRepo(userId, eventId);
 
     if (checkRegistration) {
-        throw new ConflictError('This is already registered to this event.');
+        throw new ConflictError('You are already registered for this event.');
     }
 
     const registration = await registerToEventRepo(userId, eventId);
