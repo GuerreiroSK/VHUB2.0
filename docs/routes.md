@@ -1053,7 +1053,7 @@ This document lists the backend API endpoints currently implemented in the proje
     { "message": "User not found." }
 
   - 409 Conflict
-    { "message": "This is already registered to this event." }
+    { "message": "You are already registered for this event." }
 
   - 500 Internal Server Error
     { "message": "Internal server error" }
