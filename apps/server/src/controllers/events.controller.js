@@ -9,6 +9,8 @@ import { getEventsWithOrganizations,
 import NotFoundError from '../errors/NotFoundError.js';
 import UnauthorizedError from '../errors/UnauthorizedError.js';
 
+import { EVENT_NAME_MAX_LENGTH, EVENT_LOCATION_MAX_LENGTH } from '../constants/events.constants.js';
+
 export async function getEventById (req, res) {
 
     const { id } = req.params;
@@ -109,6 +111,16 @@ export async function createEvent(req, res) {
         return res.status(400).json({ message: 'Name, Email, Location and Organization ID fields cannot be empty' });
     }
 
+    if (eventName.length > EVENT_NAME_MAX_LENGTH) {
+
+        return res.status(400).json({ message: `Event name cannot have more than ${EVENT_NAME_MAX_LENGTH} characters.`});
+    }
+
+    if (location.length > EVENT_LOCATION_MAX_LENGTH) {
+
+        return res.status(400).json({ message: `Location cannot have more than ${EVENT_LOCATION_MAX_LENGTH} characters.`});
+    }
+
     try {
 
         const createdEvent = await createEventService(eventName, location, email, organizationId, startDateTime, endDateTime, description, req.userId, req.userRole);
@@ -154,6 +166,16 @@ export async function updateEvent(req, res) {
     if (Object.keys(fields).length === 0) {
 
         return res.status(400).json({ message: 'No fields were updated' });
+    }
+
+    if (name && name.length > EVENT_NAME_MAX_LENGTH) {
+
+        return res.status(400).json({ message: `Event name cannot have more than ${EVENT_NAME_MAX_LENGTH} characters.`});
+    }
+
+    if (location && location.length > EVENT_LOCATION_MAX_LENGTH) {
+
+        return res.status(400).json({ message: `Location cannot have more than ${EVENT_LOCATION_MAX_LENGTH} characters.`});
     }
 
     try {
