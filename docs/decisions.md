@@ -335,3 +335,18 @@ We gave up the ability to distinguish "no description was ever set" (`NULL`) fro
 
 ---
 
+## Length caps on `events.name` and `events.location`
+
+**Decision**
+`events.name` is capped at 60 characters and `events.location` at 35 (`varchar(n)`). The controllers validate length and return 400 before the database is reached. The limits live in one file, `src/constants/events.constants.js`, imported by both controllers.
+
+**Why**
+Bounded fields (labels, place names) should have a limit, otherwise a 5,000-character name can break card layouts. Caps were chosen from real-world values, not from test data: the longest seeded name was 33 characters, the longest real Portuguese town tested ("Vila Real de Santo António") is 26, and each cap sits well comfortably above those. The database floor (the longest existing value) only tells you the minimum that will not make the ALTER fail. `location` holds a single place name, so "city, country" strings are out of scope. A too-long value is the client's mistake, so the controller returns 400 instead of letting the database error surface as a 500. The checks run after the required-fields guard (a dependency chain: `.length` needs the value to exist), and in `updateEvent` they are guarded with `name &&` / `location &&` because PATCH fields are optional.
+
+**Trade-off**
+The numbers now exist in two places: the migration and the constants file. Raising a cap means a new migration and a constant change. Too-tight caps reject legitimate input, so we leaned generous. `description` stays uncapped on purpose.
+
+**Result**
+Migration `008` applies both caps inside a `BEGIN`/`COMMIT` transaction so the two ALTERs are all-or-nothing. `createEvent` and `updateEvent` return 400 with a message built from the constants. Future direction: `location` becomes a country/city dropdown of predefined values, which moves the rule from "length" to "allowed value" (probably a places table). The backend must still validate, because requests can bypass the UI.
+
+---

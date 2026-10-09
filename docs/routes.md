@@ -820,6 +820,8 @@ This document lists the backend API endpoints currently implemented in the proje
   - If any required field is missing → 400 Bad Request
   - If organization does not exist → 404 Not Found
   - If org_owner tries to create an event for an org they don't own → 401 Unauthorized
+  - If `eventName` is longer than 60 characters → 400 Bad Request
+  - If `location` is longer than 35 characters → 400 Bad Request
   - If successful → 201 Created with new event
 
 - Response:
@@ -837,6 +839,8 @@ This document lists the backend API endpoints currently implemented in the proje
 
   - 400 Bad Request
     { "message": "Name, Email, Location and Organization ID fields cannot be empty" }
+    { "message": "Event name cannot have more than 60 characters." }
+    { "message": "Location cannot have more than 35 characters." }
 
   - 401 Unauthorized
     { "message": "No token provided." }
@@ -856,6 +860,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - startDateTime and endDateTime are optional — stored as null when omitted
   - org_owner can only create events for their own organization — ownership check in service layer
   - admin and developer bypass ownership check
+  - eventName max 60 characters, location max 35 (a single place name, not an address)
 
 ---
 
@@ -895,6 +900,8 @@ This document lists the backend API endpoints currently implemented in the proje
   - If event does not exist → 404 Not Found
   - If org_owner tries to update an event for an org they don't own → 401 Unauthorized
   - If successful → 200 OK with updated event
+  - If `name` is provided and longer than 60 characters → 400 Bad Request
+  - If `location` is provided and longer than 35 characters → 400 Bad Request
 
 - Example Requests:
   - PATCH /api/events/1 with { "name": "New Name" }
@@ -917,6 +924,8 @@ This document lists the backend API endpoints currently implemented in the proje
   - 400 Bad Request
     { "message": "id must be a positive integer" }
     { "message": "No fields were updated" }
+    { "message": "Event name cannot have more than 60 characters." }
+    { "message": "Location cannot have more than 35 characters." }
 
   - 401 Unauthorized
     { "message": "No token provided." }
@@ -934,7 +943,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - start_datetime and end_datetime are sent as ISO 8601 strings
   - org_owner can only update events belonging to their own organization — ownership check in service layer
   - admin and developer bypass ownership check
-  - description is optional and free-form; sending "" clears it
+  - The create endpoint reads `eventName`, this endpoint reads `name`. Unknown keys are ignored silently.
 
 ---
 
