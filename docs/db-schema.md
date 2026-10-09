@@ -74,15 +74,15 @@ Represents volunteering events created by organizations.
 
 Columns:
 - `id` (PK)
-- `name` (NOT NULL)
-- `location` (NOT NULL)
+- `name` (NOT NULL, `varchar(60)`)
+- `location` (NOT NULL, `varchar(35)`) — a single place name (city, state or country), not a full address
 - `email` (NOT NULL)
 - `organization_id` (NOT NULL, FK)
 - `start_datetime` (NULLABLE) — event start date and time
 - `end_datetime` (NULLABLE) — event end date and time
 - `created_at` (NOT NULL, default `now()`)
 - `deleted_at` (NULLABLE) — soft delete timestamp; NULL means active
-- `description` (NOT NULL, default `''`) — free-form event description; empty string when none provided
+- `description` (NOT NULL, default `''`) — free-form; deliberately uncapped
 
 Constraints:
 - Primary key: `events.id`
@@ -155,6 +155,7 @@ Enforced by:
 | Added `role` | `users` | Role column for permission levels; defaults to `'volunteer'` |
 | Added `owner_id` | `organizations` | FK to `users.id`; links an organization to its owner; `ON DELETE RESTRICT` |
 | Added `description` | `events` | Free-form description column; `NOT NULL DEFAULT ''` so existing rows survive the migration |
+| Capped `name` and `location` | `events` | `varchar` → `varchar(60)` / `varchar(35)`; bounded fields get a cap, free-form `description` stays uncapped |
 
 ---
 
