@@ -341,12 +341,26 @@ We gave up the ability to distinguish "no description was ever set" (`NULL`) fro
 `events.name` is capped at 60 characters and `events.location` at 35 (`varchar(n)`). The controllers validate length and return 400 before the database is reached. The limits live in one file, `src/constants/events.constants.js`, imported by both controllers.
 
 **Why**
-Bounded fields (labels, place names) should have a limit, otherwise a 5,000-character name can break card layouts. Caps were chosen from real-world values, not from test data: the longest seeded name was 33 characters, the longest real Portuguese town tested ("Vila Real de Santo António") is 26, and each cap sits well comfortably above those. The database floor (the longest existing value) only tells you the minimum that will not make the ALTER fail. `location` holds a single place name, so "city, country" strings are out of scope. A too-long value is the client's mistake, so the controller returns 400 instead of letting the database error surface as a 500. The checks run after the required-fields guard (a dependency chain: `.length` needs the value to exist), and in `updateEvent` they are guarded with `name &&` / `location &&` because PATCH fields are optional.
+Bounded fields (labels, place names) should have a limit, otherwise a 5,000-character name can break card layouts. Caps were chosen from real-world values, not from test data: the longest seeded name was 33 characters, the longest real Portuguese town tested ("Vila Real de Santo António") is 26, and each cap sits comfortably above those. The database floor (the longest existing value) only tells you the minimum that will not make the ALTER fail. `location` holds a single place name, so "city, country" strings are out of scope. A too-long value is the client's mistake, so the controller returns 400 instead of letting the database error surface as a 500. The checks run after the required-fields guard (a dependency chain: `.length` needs the value to exist), and in `updateEvent` they are guarded with `name &&` / `location &&` because PATCH fields are optional.
 
 **Trade-off**
-The numbers now exist in two places: the migration and the constants file. Raising a cap means a new migration and a constant change. Too-tight caps reject legitimate input, so we leaned generous. `description` stays uncapped on purpose.
+The numbers now exist in two places: the migration and the constants file. Raising a cap means a new migration and a constant change. Too-tight caps reject legitimate input, so we leaned generous. `description` was left uncapped at first; see "Length cap on `events.description`" below.
 
 **Result**
 Migration `008` applies both caps inside a `BEGIN`/`COMMIT` transaction so the two ALTERs are all-or-nothing. `createEvent` and `updateEvent` return 400 with a message built from the constants. Future direction: `location` becomes a country/city dropdown of predefined values, which moves the rule from "length" to "allowed value" (probably a places table). The backend must still validate, because requests can bypass the UI.
 
 ---
+
+## Length cap on `events.description`
+
+**Decision**
+`events.description` is capped at 3000 characters (`varchar(3000)`), enforced with a 400 in both `createEvent` and `updateEvent`. The limit lives in `events.constants.js` as `EVENT_DESCRIPTION_MAX_LENGTH`.
+
+**Why**
+"No limit" was never really unlimited: Postgres would accept about 1GB, and only Express's default body-size limit stopped huge requests, by accident rather than by rule. List endpoints return `description` for every event, so oversized values make every list response heavy. 3000 characters is roughly 500 words, enough for a long description, and events already carry an `email` field, so anything longer can be requested by contacting the organizer. The frontend can truncate for presentation, but only the backend protects data and payload size. The longest stored description was 27 characters, so the migration could not fail.
+
+**Trade-off**
+The number lives in two places again (migration and constants file). A cap that is too tight would cut off real writing, so we leaned generous.
+
+**Result**
+Migration `009` changes only the type; `NOT NULL DEFAULT ''` survived (verified with `information_schema`). Unlike `name` and `location`, `description` is optional, so the controller checks are written `description && description.length > ...`. Without the existence guard, `.length` on `undefined` would throw a 500, and the repository's `description || ''` runs too late to help because the controller runs first.

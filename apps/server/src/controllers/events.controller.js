@@ -9,7 +9,7 @@ import { getEventsWithOrganizations,
 import NotFoundError from '../errors/NotFoundError.js';
 import UnauthorizedError from '../errors/UnauthorizedError.js';
 
-import { EVENT_NAME_MAX_LENGTH, EVENT_LOCATION_MAX_LENGTH } from '../constants/events.constants.js';
+import { EVENT_NAME_MAX_LENGTH, EVENT_LOCATION_MAX_LENGTH, EVENT_DESCRIPTION_MAX_LENGTH } from '../constants/events.constants.js';
 
 export async function getEventById (req, res) {
 
@@ -121,6 +121,11 @@ export async function createEvent(req, res) {
         return res.status(400).json({ message: `Location cannot have more than ${EVENT_LOCATION_MAX_LENGTH} characters.`});
     }
 
+    if (description && description.length > EVENT_DESCRIPTION_MAX_LENGTH) {
+
+        return res.status(400).json({ message: `Description cannot have more than ${EVENT_DESCRIPTION_MAX_LENGTH} characters.`});
+    }
+
     try {
 
         const createdEvent = await createEventService(eventName, location, email, organizationId, startDateTime, endDateTime, description, req.userId, req.userRole);
@@ -176,6 +181,11 @@ export async function updateEvent(req, res) {
     if (location && location.length > EVENT_LOCATION_MAX_LENGTH) {
 
         return res.status(400).json({ message: `Location cannot have more than ${EVENT_LOCATION_MAX_LENGTH} characters.`});
+    }
+
+    if (description && description.length > EVENT_DESCRIPTION_MAX_LENGTH) {
+
+        return res.status(400).json({ message: `Description cannot have more than ${EVENT_DESCRIPTION_MAX_LENGTH} characters.`});
     }
 
     try {

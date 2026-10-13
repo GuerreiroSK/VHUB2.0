@@ -822,6 +822,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - If org_owner tries to create an event for an org they don't own → 401 Unauthorized
   - If `eventName` is longer than 60 characters → 400 Bad Request
   - If `location` is longer than 35 characters → 400 Bad Request
+  - If `description` is longer than 3000 characters → 400 Bad Request
   - If successful → 201 Created with new event
 
 - Response:
@@ -841,6 +842,7 @@ This document lists the backend API endpoints currently implemented in the proje
     { "message": "Name, Email, Location and Organization ID fields cannot be empty" }
     { "message": "Event name cannot have more than 60 characters." }
     { "message": "Location cannot have more than 35 characters." }
+    { "message": "Description cannot have more than 3000 characters." }
 
   - 401 Unauthorized
     { "message": "No token provided." }
@@ -861,6 +863,7 @@ This document lists the backend API endpoints currently implemented in the proje
   - org_owner can only create events for their own organization — ownership check in service layer
   - admin and developer bypass ownership check
   - eventName max 60 characters, location max 35 (a single place name, not an address)
+  - description max 3000 characters
 
 ---
 
@@ -899,9 +902,10 @@ This document lists the backend API endpoints currently implemented in the proje
   - If body is empty (no fields provided) → 400 Bad Request
   - If event does not exist → 404 Not Found
   - If org_owner tries to update an event for an org they don't own → 401 Unauthorized
-  - If successful → 200 OK with updated event
   - If `name` is provided and longer than 60 characters → 400 Bad Request
   - If `location` is provided and longer than 35 characters → 400 Bad Request
+  - If `description` is provided and longer than 3000 characters → 400 Bad Request
+  - If successful → 200 OK with updated event
 
 - Example Requests:
   - PATCH /api/events/1 with { "name": "New Name" }
@@ -926,6 +930,7 @@ This document lists the backend API endpoints currently implemented in the proje
     { "message": "No fields were updated" }
     { "message": "Event name cannot have more than 60 characters." }
     { "message": "Location cannot have more than 35 characters." }
+    { "message": "Description cannot have more than 3000 characters." }
 
   - 401 Unauthorized
     { "message": "No token provided." }
