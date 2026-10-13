@@ -82,7 +82,7 @@ Columns:
 - `end_datetime` (NULLABLE) — event end date and time
 - `created_at` (NOT NULL, default `now()`)
 - `deleted_at` (NULLABLE) — soft delete timestamp; NULL means active
-- `description` (NOT NULL, default `''`) — free-form; deliberately uncapped
+- `description` (NOT NULL, default `''`, `varchar(3000)`) — free-form event description; empty string when none provided
 
 Constraints:
 - Primary key: `events.id`
@@ -155,7 +155,8 @@ Enforced by:
 | Added `role` | `users` | Role column for permission levels; defaults to `'volunteer'` |
 | Added `owner_id` | `organizations` | FK to `users.id`; links an organization to its owner; `ON DELETE RESTRICT` |
 | Added `description` | `events` | Free-form description column; `NOT NULL DEFAULT ''` so existing rows survive the migration |
-| Capped `name` and `location` | `events` | `varchar` → `varchar(60)` / `varchar(35)`; bounded fields get a cap, free-form `description` stays uncapped |
+| Capped `name` and `location` | `events` | `varchar` → `varchar(60)` / `varchar(35)`; bounded fields get a cap (`description` was capped later, see next row) |
+| Capped `description` | `events` | `varchar` → `varchar(3000)`; longer details are requested by email. `NOT NULL DEFAULT ''` unchanged |
 
 ---
 
